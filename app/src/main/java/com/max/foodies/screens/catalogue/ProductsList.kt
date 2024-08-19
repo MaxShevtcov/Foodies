@@ -13,6 +13,11 @@ fun ProductsList(modifier: Modifier, products: List<Product>) {
         modifier = modifier,
         columns = GridCells.Fixed(2)
     ) {
-        items(products) { product -> ProductCard(modifier = modifier, product = product) }
+        items(
+            items = products,
+            key = {product -> product.id!!}
+        ) { product ->
+        ProductCard(modifier = modifier, product = product)
+    }
     }
 }

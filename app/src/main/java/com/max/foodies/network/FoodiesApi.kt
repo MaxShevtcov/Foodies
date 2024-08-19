@@ -1,6 +1,6 @@
 package com.max.foodies.network
 
-import com.max.foodies.network.pojo.Categorie
+import com.max.foodies.network.pojo.Category
 import com.max.foodies.network.pojo.Product
 import com.max.foodies.network.pojo.Tag
 import retrofit2.Retrofit
@@ -9,8 +9,8 @@ import retrofit2.http.GET
 
 private const val BASE_URL = "https://anika1d.github.io/WorkTestServer/"
 interface FoodiesApiService {
-    @GET("Categorie.json")
-    suspend fun getCategories(): List<Categorie>
+    @GET("Categories.json")
+    suspend fun getCategories(): List<Category>
     @GET("Tag.json")
     suspend fun getTags(): List<Tag>
     @GET("Products.json")
