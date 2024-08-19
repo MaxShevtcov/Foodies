@@ -2,6 +2,8 @@ package com.max.foodies.screens.catalogue
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -12,6 +14,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,13 +36,15 @@ fun CatalogueTopBar(modifier: Modifier) {
             ComposeIcon(resourceId = ComposeIcons.filter, annotation = "filter")
         }
 
-            ComposeIcon(modifier = modifier.weight(1f),resourceId = ComposeIcons.logo, annotation = "logo")
-//        GlideImage(
-//            modifier = modifier.weight(1f),
-//            model = "https://i.ibb.co/qJ1qSyp/Logo.png",
-//            contentScale = ContentScale.Crop,
-//            contentDescription = "Logo"
-//        )
+        ComposeIcon(
+            modifier = modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            resourceId = ComposeIcons.logo,
+            annotation = "logo",
+            tint = Orange
+        )
+
         IconButton(
             modifier = modifier.padding(8.dp),
             onClick = { /*TODO*/ }
@@ -51,7 +56,7 @@ fun CatalogueTopBar(modifier: Modifier) {
 
 }
 
-@Preview(showBackground = true, widthDp = 320)
+@Preview(showBackground = true, widthDp = 320, heightDp = 64)
 @Composable
 fun CatalogueTopBarPreview() {
     CatalogueTopBar(Modifier)
