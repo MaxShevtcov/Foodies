@@ -1,7 +1,7 @@
 package com.max.foodies.ui.theme
 
 import androidx.compose.ui.graphics.Color
-val Orange = Color(0xF15412)
+val Orange = Color(0xFFF15412)
 val Dark = Color(0x333333)
 val GrayBg = Color(0xF5F5F5)
 val White = Color(0xFFFFFF)
