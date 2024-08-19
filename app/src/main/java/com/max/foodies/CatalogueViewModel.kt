@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.max.foodies.network.FoodiesApi
+import com.max.foodies.network.pojo.Category
 import com.max.foodies.room.CartDatabase
 import com.max.foodies.screens.catalogue.CatalogueState
 import kotlinx.coroutines.Dispatchers
@@ -32,17 +33,22 @@ class CatalogueViewModel(
         viewModelScope.launch(Dispatchers.Default) {
             val products = catalogueRepository.getProducts()
             Log.e("!!!", "product: $products")
-            //val categories = catalogueRepository.getCategories()
-            //Log.e("!!!", "categories: $categories")
+            val categories = catalogueRepository.getCategories()
+            Log.e("!!!", "categories: $categories")
             _catalogueState.update {
                 it.copy(
                     product = products,
-                    //categories = categories,
+                    categories = categories,
                 )
             }
         }
     }
 
+    fun selectCategory(item: Category, selected: Boolean) {
+        _catalogueState.value.categories.find { it.id == item.id }?.let { category ->
+            category.selected = selected
+        }
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory =

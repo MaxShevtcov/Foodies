@@ -3,8 +3,6 @@ package com.max.foodies.screens.catalogue
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +19,16 @@ fun CatalogueScreen(
     val catalogueScreenState = catalogueViewModel.catalogueState.collectAsState()
     Column {
         CatalogueTopBar(modifier = modifier.height(64.dp))
+        CategoriesList(
+            modifier = modifier,
+            categories = catalogueScreenState.value.categories,
+            onSelected = { category, selected ->
+                catalogueViewModel.selectCategory(
+                    category,
+                    selected
+                )
+            }
+        )
         ProductsList(modifier = modifier, products = catalogueScreenState.value.product)
     }
 
