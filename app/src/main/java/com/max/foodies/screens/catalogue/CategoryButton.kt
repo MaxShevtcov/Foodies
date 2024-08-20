@@ -25,8 +25,7 @@ fun CategoryButton(
         ElevatedButton(
             onClick = {onSelected(category,!selected)} ,
             modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .fillMaxWidth(),
             shape = RoundedCornerShape(15),
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
             colors = ButtonDefaults.buttonColors(Orange)
@@ -34,13 +33,11 @@ fun CategoryButton(
             Text(text = "${category.name}")
         }
     }else {
-        ElevatedButton(
+        TextButton(
             onClick = {onSelected(category,!selected)},
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            shape = RoundedCornerShape(15),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
+                .padding(horizontal = 12.dp),
         ) {
             Text(text = "${category.name}")
         }
