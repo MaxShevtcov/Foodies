@@ -29,7 +29,7 @@ fun CatalogueScreen(
                 )
             }
         )
-        ProductsList(modifier = modifier, products = catalogueScreenState.value.product)
+        ProductsList(modifier = modifier, products = catalogueScreenState.value.products)
     }
 
 }

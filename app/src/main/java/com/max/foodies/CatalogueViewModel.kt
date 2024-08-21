@@ -25,6 +25,8 @@ class CatalogueViewModel(
         MutableStateFlow(CatalogueState())
     val catalogueState: StateFlow<CatalogueState> = _catalogueState.asStateFlow()
 
+
+
     init {
         updateCatalogueState()
     }
@@ -37,8 +39,32 @@ class CatalogueViewModel(
             Log.e("!!!", "categories: $categories")
             _catalogueState.update {
                 it.copy(
-                    product = products,
+                    products = products,
                     categories = categories,
+                )
+            }
+        }
+    }
+
+    private fun filterProducts(category: Category, selected: Boolean) {
+
+        viewModelScope.launch(Dispatchers.Default) {
+            val product = catalogueRepository.getProducts()
+            val filteredProducts =
+                product.asSequence().filter { product -> product.categoryId == category.id }
+
+            var concatenatedFilteredProducts = _catalogueState.value.filteredProducts.toMutableList()
+
+            if (selected) {
+                concatenatedFilteredProducts.addAll(filteredProducts)
+            } else {
+                concatenatedFilteredProducts.removeAll(filteredProducts)
+            }
+
+            _catalogueState.update {
+                it.copy(
+                    products = if (concatenatedFilteredProducts.isEmpty()) product else concatenatedFilteredProducts,
+                    filteredProducts = concatenatedFilteredProducts
                 )
             }
         }
@@ -47,6 +73,7 @@ class CatalogueViewModel(
     fun selectCategory(item: Category, selected: Boolean) {
         _catalogueState.value.categories.find { it.id == item.id }?.let { category ->
             category.selected = selected
+            filterProducts(category, selected)
         }
     }
 
