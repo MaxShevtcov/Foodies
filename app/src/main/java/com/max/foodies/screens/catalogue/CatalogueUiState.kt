@@ -5,6 +5,7 @@ import com.max.foodies.network.pojo.Product
 
 data class CatalogueState(
     val products: List<Product> = emptyList(),
-    val filteredProducts: List<Product> = emptyList(),
     val categories: List<Category> = emptyList(),
+    val isSearching: Boolean = false,
+    val searchText: String = "",
     )
