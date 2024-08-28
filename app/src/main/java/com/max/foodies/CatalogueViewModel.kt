@@ -8,12 +8,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.max.foodies.network.FoodiesApi
 import com.max.foodies.network.pojo.Category
+import com.max.foodies.network.pojo.Product
 import com.max.foodies.room.CartDatabase
 import com.max.foodies.screens.catalogue.CatalogueState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,7 +27,9 @@ class CatalogueViewModel(
         MutableStateFlow(CatalogueState())
     val catalogueState: StateFlow<CatalogueState> = _catalogueState.asStateFlow()
 
-
+    private val concatenatedFilteredProducts: MutableStateFlow<List<Product>> =
+        MutableStateFlow(emptyList())
+    private val searchedProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
 
     init {
         updateCatalogueState()
@@ -47,25 +51,21 @@ class CatalogueViewModel(
     }
 
     private fun filterProducts(category: Category, selected: Boolean) {
-
         viewModelScope.launch(Dispatchers.Default) {
-            val product = catalogueRepository.getProducts()
-            val filteredProducts =
-                product.asSequence().filter { product -> product.categoryId == category.id }
+            val products = catalogueRepository.getProducts()
+            val filteredProducts = products.filter { product -> product.categoryId == category.id }
 
-            var concatenatedFilteredProducts = _catalogueState.value.filteredProducts.toMutableList()
 
             if (selected) {
-                concatenatedFilteredProducts.addAll(filteredProducts)
+                concatenatedFilteredProducts.value =
+                    concatenatedFilteredProducts.value.plus(filteredProducts)
             } else {
-                concatenatedFilteredProducts.removeAll(filteredProducts)
+                concatenatedFilteredProducts.value =
+                    concatenatedFilteredProducts.value.minus(filteredProducts.toSet())
             }
 
             _catalogueState.update {
-                it.copy(
-                    products = if (concatenatedFilteredProducts.isEmpty()) product else concatenatedFilteredProducts,
-                    filteredProducts = concatenatedFilteredProducts
-                )
+                it.copy(products = concatenatedFilteredProducts.value.ifEmpty { products })
             }
         }
     }
@@ -75,6 +75,46 @@ class CatalogueViewModel(
             category.selected = selected
             filterProducts(category, selected)
         }
+    }
+
+    fun onSearchTextChange(text: String) {
+        filterSearchedProducts()
+        _catalogueState.update {
+            it.copy(
+                searchText = text,
+            )
+        }
+    }
+
+    fun onToogleSearch() {
+        val isSearching = _catalogueState.value.isSearching
+        _catalogueState.update {
+            it.copy(
+                isSearching = !isSearching
+            )
+        }
+    }
+
+    private fun filterSearchedProducts() {
+        viewModelScope.launch {
+            val products = catalogueRepository.getProducts()
+            searchedProducts.value = _catalogueState.value.products.filter { product ->
+                product.name?.uppercase()?.contains(
+                    _catalogueState.value.searchText.trim().uppercase()
+                )
+                    ?: false
+            }
+            _catalogueState.update {
+                it.copy(
+                    products = when {
+                        _catalogueState.value.searchText.isNotBlank() -> searchedProducts.value
+                        concatenatedFilteredProducts.value.isNotEmpty() -> concatenatedFilteredProducts.value
+                        else -> products
+                    }
+                )
+            }
+        }
+
     }
 
     companion object {
@@ -98,23 +138,5 @@ class CatalogueViewModel(
                     throw IllegalArgumentException("Unknown ViewModel")
                 }
             }
-//        fun createFactory(context: Context): ViewModelProvider.Factory =
-//            object : ViewModelProvider.Factory {
-//                override fun <T : ViewModel> create(
-//                    modelClass: Class<T>,
-//                    extras: CreationExtras
-//                ): T {
-//                    if (modelClass.isAssignableFrom(CatalogueViewModel::class.java)) {
-//                        val catalogueRepository = CatalogueRepository(
-//                            localDataSource = CartDatabase.getInstance(context).cartDao(),
-//                            networkDataSource = FoodiesApi.foodiesApiService
-//                        )
-//                        return CatalogueViewModel(
-//                            catalogueRepository,
-//                        ) as T
-//                    }
-//                    throw IllegalArgumentException("unknown ViewModel")
-//                }
-//            }
     }
 }
