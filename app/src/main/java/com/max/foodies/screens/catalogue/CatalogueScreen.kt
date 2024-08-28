@@ -18,7 +18,12 @@ fun CatalogueScreen(
 ) {
     val catalogueScreenState = catalogueViewModel.catalogueState.collectAsState()
     Column {
-        CatalogueTopBar(modifier = modifier.height(64.dp))
+        CatalogueTopBar(
+            searchText = catalogueScreenState.value.searchText,
+            isSearching = catalogueScreenState.value.isSearching,
+            onSearchTextChange = {query -> catalogueViewModel.onSearchTextChange(query)},
+            onToogleSearch = {catalogueViewModel.onToogleSearch()},
+            modifier = modifier.height(64.dp))
         CategoriesList(
             modifier = modifier,
             categories = catalogueScreenState.value.categories,
