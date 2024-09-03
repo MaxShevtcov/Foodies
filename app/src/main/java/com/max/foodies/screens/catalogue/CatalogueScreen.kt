@@ -23,7 +23,7 @@ fun CatalogueScreen(
             isSearching = catalogueScreenState.value.isSearching,
             onSearchTextChange = {query -> catalogueViewModel.onSearchTextChange(query)},
             onToogleSearch = {catalogueViewModel.onToogleSearch()},
-            modifier = modifier.height(64.dp))
+            modifier = modifier.height(72.dp))
         CategoriesList(
             modifier = modifier,
             categories = catalogueScreenState.value.categories,

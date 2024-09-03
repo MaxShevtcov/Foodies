@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -58,7 +59,7 @@ fun CatalogueTopBar(
                     isSearching = isSearching,
                     onSearchTextChange = { query -> onSearchTextChange(query) },
                     onToogleSearch = { onToogleSearch },
-                    modifier = modifier.weight(1f)
+                    modifier = modifier.weight(1f).padding(8.dp)
                 )
             } else {
                 ComposeIcon(
