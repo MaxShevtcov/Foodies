@@ -5,19 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.CreationExtras import com.max.foodies.mappers.toProduct
+import com.max.foodies.mappers.toProductInCatalogue
 import com.max.foodies.network.FoodiesApi
 import com.max.foodies.network.pojo.Category
 import com.max.foodies.network.pojo.Product
-import com.max.foodies.room.CartDatabase
-import com.max.foodies.screens.catalogue.CatalogueState
+import com.max.foodies.room.catalogueDatabase.CatalogueDatabase
+import com.max.foodies.screens.catalogueScreen.CatalogueState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -37,12 +37,19 @@ class CatalogueViewModel(
         updateCatalogueState()
     }
 
+    private fun insertProducts(products:List<Product>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            catalogueRepository.insertAll(products.map { it.toProductInCatalogue() })
+        }
+    }
+
     private fun updateCatalogueState() {
         viewModelScope.launch(Dispatchers.Default) {
             val products = catalogueRepository.getProducts()
             Log.e("!!!", "product: $products")
             val categories = catalogueRepository.getCategories()
             Log.e("!!!", "categories: $categories")
+            insertProducts(products)
             _catalogueState.update {
                 it.copy(
                     products = products,
@@ -54,9 +61,8 @@ class CatalogueViewModel(
 
     private fun filterProducts(category: Category, selected: Boolean) {
         viewModelScope.launch(Dispatchers.Default) {
-            val products = catalogueRepository.getProducts()
+            val products = catalogueRepository.getProductsFormDb().map { it.toProduct() }
             val filteredProducts = products.filter { product -> product.categoryId == category.id }
-
 
             if (selected) {
                 concatenatedFilteredProducts.value =
@@ -65,7 +71,6 @@ class CatalogueViewModel(
                 concatenatedFilteredProducts.value =
                     concatenatedFilteredProducts.value.minus(filteredProducts.toSet())
             }
-
             _catalogueState.update {
                 it.copy(products = concatenatedFilteredProducts.value.ifEmpty { products })
             }
@@ -98,8 +103,8 @@ class CatalogueViewModel(
     }
 
     private fun filterSearchedProducts() {
-        viewModelScope.launch {
-            val products = catalogueRepository.getProducts()
+        viewModelScope.launch(Dispatchers.Default) {
+            val products = catalogueRepository.getProductsFormDb().map { it.toProduct() }
             searchedProducts.value = _catalogueState.value.products.filter { product ->
                 product.name?.uppercase()?.contains(
                     _catalogueState.value.searchText.trim().uppercase()
@@ -130,8 +135,8 @@ class CatalogueViewModel(
                         val application = checkNotNull(extras[APPLICATION_KEY])
                         val applicationScope = CoroutineScope(SupervisorJob())
                         val catalogueRepository = CatalogueRepository(
-                            localDataSource = CartDatabase.getInstance(application.applicationContext, applicationScope)
-                                .cartDao(),
+                            localDataSource = CatalogueDatabase.getInstance(application.applicationContext, applicationScope)
+                                .catalogueDao(),
                             networkDataSource = FoodiesApi.foodiesApiService
                         )
                         return CatalogueViewModel(
