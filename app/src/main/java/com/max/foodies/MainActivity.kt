@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.max.foodies.screens.catalogue.CatalogueScreen
+import com.max.foodies.screens.catalogueScreen.CatalogueScreen
 import com.max.foodies.ui.theme.FoodiesTheme
 
 class MainActivity : ComponentActivity() {
