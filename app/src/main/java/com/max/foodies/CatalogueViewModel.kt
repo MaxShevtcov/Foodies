@@ -11,7 +11,9 @@ import com.max.foodies.network.pojo.Category
 import com.max.foodies.network.pojo.Product
 import com.max.foodies.room.CartDatabase
 import com.max.foodies.screens.catalogue.CatalogueState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -126,8 +128,9 @@ class CatalogueViewModel(
                 ): T {
                     if (modelClass.isAssignableFrom(CatalogueViewModel::class.java)) {
                         val application = checkNotNull(extras[APPLICATION_KEY])
+                        val applicationScope = CoroutineScope(SupervisorJob())
                         val catalogueRepository = CatalogueRepository(
-                            localDataSource = CartDatabase.getInstance(application.applicationContext)
+                            localDataSource = CartDatabase.getInstance(application.applicationContext, applicationScope)
                                 .cartDao(),
                             networkDataSource = FoodiesApi.foodiesApiService
                         )
