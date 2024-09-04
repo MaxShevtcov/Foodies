@@ -1,4 +1,4 @@
-package com.max.foodies.screens.catalogue
+package com.max.foodies.screens.catalogueScreen.composeItems
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

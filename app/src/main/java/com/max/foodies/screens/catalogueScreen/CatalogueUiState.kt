@@ -1,4 +1,4 @@
-package com.max.foodies.screens.catalogue
+package com.max.foodies.screens.catalogueScreen
 
 import com.max.foodies.network.pojo.Category
 import com.max.foodies.network.pojo.Product

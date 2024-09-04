@@ -1,4 +1,4 @@
-package com.max.foodies.screens.catalogue
+package com.max.foodies.screens.catalogueScreen
 
 
 import androidx.compose.foundation.layout.Column
@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.max.foodies.CatalogueViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.max.foodies.screens.catalogueScreen.composeItems.CatalogueTopBar
+import com.max.foodies.screens.catalogueScreen.composeItems.CategoriesList
 
 @Composable
 fun CatalogueScreen(

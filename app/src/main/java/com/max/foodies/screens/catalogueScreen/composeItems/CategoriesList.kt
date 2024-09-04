@@ -1,4 +1,4 @@
-package com.max.foodies.screens.catalogue
+package com.max.foodies.screens.catalogueScreen.composeItems
 
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
