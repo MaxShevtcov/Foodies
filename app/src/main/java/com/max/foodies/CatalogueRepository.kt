@@ -6,13 +6,16 @@ import com.max.foodies.network.pojo.Category
 import com.max.foodies.network.pojo.Product
 import com.max.foodies.room.CartDao
 import com.max.foodies.room.ProductInCart
+import com.max.foodies.room.catalogueDatabase.CatalogueDao
+import com.max.foodies.room.catalogueDatabase.ProductInCatalogue
+
 
 class CatalogueRepository(
     private val networkDataSource: FoodiesApiService,
-    private val localDataSource: CartDao
+    private val localDataSource: CatalogueDao
 ) {
-    suspend fun insert(product: ProductInCart) {
-        localDataSource.insert(product)
+    suspend fun insertAll(products: List<ProductInCatalogue>) {
+        localDataSource.insertAll(products)
     }
     suspend fun getProducts(): List<Product> {
         try {
@@ -31,4 +34,9 @@ class CatalogueRepository(
         }
         return emptyList()
     }
+
+    suspend fun getProductsFormDb(): List<ProductInCatalogue> {
+        return localDataSource.get()
+    }
 }
+
