@@ -27,4 +27,5 @@ object ComposeIcons {
     val filter = R.drawable.filter
     val search = R.drawable.search
     val logo = R.drawable.ic_logo
+    val arrowLeft = R.drawable.arrowleft
 }

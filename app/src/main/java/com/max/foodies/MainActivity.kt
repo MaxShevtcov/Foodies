@@ -11,15 +11,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.max.foodies.screens.catalogueScreen.CatalogueScreen
 import com.max.foodies.screens.catalogueScreen.CatalogueViewModel
 import com.max.foodies.ui.theme.FoodiesTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: CatalogueViewModel by viewModels {
-        CatalogueViewModel.Factory
-    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -29,8 +30,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CatalogueScreen()
-                //                    Greeting("Android")
+                    Navigation()
                 }
             }
         }

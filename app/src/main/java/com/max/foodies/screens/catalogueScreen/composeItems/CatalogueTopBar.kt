@@ -1,5 +1,6 @@
 package com.max.foodies.screens.catalogueScreen.composeItems
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,12 +20,9 @@ import com.max.foodies.ui.theme.Orange
 
 @Composable
 fun CatalogueTopBar(
-    onSearch: () -> Unit,
+    onNavigateToSearch: () -> Unit,
     modifier: Modifier
 ) {
-    var onShowSearchBar by rememberSaveable {
-        mutableStateOf(false)
-    }
 
     Column {
         Row() {
@@ -34,23 +32,21 @@ fun CatalogueTopBar(
             ) {
                 ComposeIcon(resourceId = ComposeIcons.filter, annotation = "filter")
             }
-            if (onShowSearchBar) {
 
-            } else {
-                ComposeIcon(
-                    modifier = modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    resourceId = ComposeIcons.logo,
-                    annotation = "logo",
-                    tint = Orange
-                )
-            }
-
+            ComposeIcon(
+                modifier = modifier
+                    .weight(1f),
+                resourceId = ComposeIcons.logo,
+                annotation = "logo",
+                tint = Orange
+            )
 
             IconButton(
                 modifier = modifier.padding(8.dp),
-                onClick = { onSearch }
+                onClick = {
+                    onNavigateToSearch()
+                    Log.e("nav", "on Nav in Catalogue topbar")
+                }
             ) {
                 ComposeIcon(resourceId = ComposeIcons.search, annotation = "search")
             }
