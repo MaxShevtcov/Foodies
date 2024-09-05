@@ -71,7 +71,7 @@ class SearchViewModel(
                     modelClass: Class<T>,
                     extras: CreationExtras
                 ): T {
-                    if (modelClass.isAssignableFrom(CatalogueViewModel::class.java)) {
+                    if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
                         val application = checkNotNull(extras[APPLICATION_KEY])
                         val applicationScope = CoroutineScope(SupervisorJob())
                         val catalogueRepository = CatalogueRepository(
@@ -82,7 +82,7 @@ class SearchViewModel(
                                 .catalogueDao(),
                             networkDataSource = FoodiesApi.foodiesApiService
                         )
-                        return CatalogueViewModel(
+                        return SearchViewModel(
                             catalogueRepository = catalogueRepository
                         ) as T
                     }
