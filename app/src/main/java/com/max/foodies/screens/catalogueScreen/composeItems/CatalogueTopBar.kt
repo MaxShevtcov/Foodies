@@ -35,7 +35,8 @@ fun CatalogueTopBar(
 
             ComposeIcon(
                 modifier = modifier
-                    .weight(1f),
+                    .weight(1f)
+                    .fillMaxHeight(),
                 resourceId = ComposeIcons.logo,
                 annotation = "logo",
                 tint = Orange

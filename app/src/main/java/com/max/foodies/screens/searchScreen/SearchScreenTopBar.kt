@@ -24,7 +24,7 @@ fun SearchScreenTopBar(
     Column {
         Row() {
             IconButton(
-                modifier = modifier.padding(start = 8.dp),
+                modifier = modifier,
                 onClick = {onBackPressed()}
             ) {
                 ComposeIcon(resourceId = ComposeIcons.arrowLeft, annotation = "filter")

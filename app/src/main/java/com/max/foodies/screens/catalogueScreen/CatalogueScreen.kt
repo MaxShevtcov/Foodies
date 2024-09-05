@@ -3,10 +3,13 @@ package com.max.foodies.screens.catalogueScreen
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.max.foodies.screens.ProductsList
 import com.max.foodies.screens.catalogueScreen.composeItems.CatalogueTopBar
@@ -22,7 +25,7 @@ fun CatalogueScreen(
     Column {
         CatalogueTopBar(
             onNavigateToSearch =  {onNavigateToSearch()} ,
-            modifier = modifier
+            modifier = modifier.height(72.dp)
         )
 
         CategoriesList(
