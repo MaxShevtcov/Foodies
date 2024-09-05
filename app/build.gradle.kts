@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
     id("kotlin-kapt")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -70,7 +71,11 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-//Glide
+
+    //Navigation
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    implementation("androidx.navigation:navigation-compose:2.8.0")
+    //Glide
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
