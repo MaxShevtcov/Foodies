@@ -20,15 +20,14 @@ fun SearchScreenTopBar(
     onBackPressed: () -> Unit,
     modifier: Modifier
 ) {
-
-
+    
     Column {
         Row() {
             IconButton(
-                modifier = modifier.padding(8.dp),
-                onClick = { /*TODO*/ }
+                modifier = modifier.padding(start = 8.dp),
+                onClick = {onBackPressed()}
             ) {
-                ComposeIcon(resourceId = ComposeIcons.filter, annotation = "filter")
+                ComposeIcon(resourceId = ComposeIcons.arrowLeft, annotation = "filter")
             }
             SearchScreenSearchBar(
                 searchText = searchText,
@@ -39,10 +38,7 @@ fun SearchScreenTopBar(
             )
 
         }
-
     }
-
-
 }
 
 
