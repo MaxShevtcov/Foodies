@@ -1,4 +1,4 @@
-package com.max.foodies.network.pojo
+package com.max.foodies.model.network.pojo
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

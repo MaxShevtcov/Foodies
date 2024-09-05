@@ -1,10 +1,10 @@
-package com.max.foodies.mappers
+package com.max.foodies.model.mappers
 
-import com.max.foodies.network.pojo.Product
-import com.max.foodies.room.catalogueDatabase.ProductInCatalogue
+import com.max.foodies.model.network.pojo.Product
+import com.max.foodies.model.room.catalogueDatabase.ProductInCatalogue
 
-fun ProductInCatalogue.toProduct(): Product {
-    return Product(
+fun Product.toProductInCatalogue(): ProductInCatalogue {
+    return ProductInCatalogue(
         id = id,
         categoryId = categoryId,
         name = name,

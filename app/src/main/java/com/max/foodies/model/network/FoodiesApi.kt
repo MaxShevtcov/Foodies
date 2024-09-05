@@ -1,8 +1,8 @@
-package com.max.foodies.network
+package com.max.foodies.model.network
 
-import com.max.foodies.network.pojo.Category
-import com.max.foodies.network.pojo.Product
-import com.max.foodies.network.pojo.Tag
+import com.max.foodies.model.network.pojo.Category
+import com.max.foodies.model.network.pojo.Product
+import com.max.foodies.model.network.pojo.Tag
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -22,7 +22,7 @@ object FoodiesApi {
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(BASE_URL)
         .build()
-    val foodiesApiService:FoodiesApiService by lazy {
+    val foodiesApiService: FoodiesApiService by lazy {
         retrofit.create(FoodiesApiService::class.java)
     }
 }

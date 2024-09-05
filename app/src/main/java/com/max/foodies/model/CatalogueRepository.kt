@@ -1,13 +1,11 @@
-package com.max.foodies
+package com.max.foodies.model
 
 import android.util.Log
-import com.max.foodies.network.FoodiesApiService
-import com.max.foodies.network.pojo.Category
-import com.max.foodies.network.pojo.Product
-import com.max.foodies.room.CartDao
-import com.max.foodies.room.ProductInCart
-import com.max.foodies.room.catalogueDatabase.CatalogueDao
-import com.max.foodies.room.catalogueDatabase.ProductInCatalogue
+import com.max.foodies.model.network.FoodiesApiService
+import com.max.foodies.model.network.pojo.Category
+import com.max.foodies.model.network.pojo.Product
+import com.max.foodies.model.room.catalogueDatabase.CatalogueDao
+import com.max.foodies.model.room.catalogueDatabase.ProductInCatalogue
 
 
 class CatalogueRepository(

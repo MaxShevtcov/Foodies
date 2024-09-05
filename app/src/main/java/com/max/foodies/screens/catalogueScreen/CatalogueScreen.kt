@@ -8,7 +8,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.max.foodies.CatalogueViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.max.foodies.screens.catalogueScreen.composeItems.CatalogueTopBar
 import com.max.foodies.screens.catalogueScreen.composeItems.CategoriesList
@@ -21,11 +20,10 @@ fun CatalogueScreen(
     val catalogueScreenState = catalogueViewModel.catalogueState.collectAsState()
     Column {
         CatalogueTopBar(
-            searchText = catalogueScreenState.value.searchText,
-            isSearching = catalogueScreenState.value.isSearching,
-            onSearchTextChange = {query -> catalogueViewModel.onSearchTextChange(query)},
-            onToogleSearch = {catalogueViewModel.onToogleSearch()},
-            modifier = modifier.height(72.dp))
+            onSearch = {/* TODO() */},
+            modifier = modifier
+        )
+
         CategoriesList(
             modifier = modifier,
             categories = catalogueScreenState.value.categories,

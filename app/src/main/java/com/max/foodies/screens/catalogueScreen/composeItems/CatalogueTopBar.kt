@@ -19,10 +19,7 @@ import com.max.foodies.ui.theme.Orange
 
 @Composable
 fun CatalogueTopBar(
-    searchText: String,
-    isSearching: Boolean,
-    onSearchTextChange: (String) -> Unit,
-    onToogleSearch: () -> Unit,
+    onSearch: () -> Unit,
     modifier: Modifier
 ) {
     var onShowSearchBar by rememberSaveable {
@@ -38,13 +35,7 @@ fun CatalogueTopBar(
                 ComposeIcon(resourceId = ComposeIcons.filter, annotation = "filter")
             }
             if (onShowSearchBar) {
-                CatalogueSearchBar(
-                    searchText = searchText,
-                    isSearching = isSearching,
-                    onSearchTextChange = { query -> onSearchTextChange(query) },
-                    onToogleSearch = { onToogleSearch },
-                    modifier = modifier.weight(1f).padding(8.dp)
-                )
+
             } else {
                 ComposeIcon(
                     modifier = modifier
@@ -59,7 +50,7 @@ fun CatalogueTopBar(
 
             IconButton(
                 modifier = modifier.padding(8.dp),
-                onClick = { onShowSearchBar = !onShowSearchBar }
+                onClick = { onSearch }
             ) {
                 ComposeIcon(resourceId = ComposeIcons.search, annotation = "search")
             }

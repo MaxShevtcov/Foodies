@@ -1,13 +1,10 @@
-package com.max.foodies.room.catalogueDatabase
+package com.max.foodies.model.room.catalogueDatabase
 
 import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.google.gson.annotations.SerializedName
-import com.max.foodies.network.pojo.Product
-import com.max.foodies.room.ProductConverters
+import com.max.foodies.model.room.ProductConverters
 
 @Entity(tableName = "catalogue_table")
 @TypeConverters(ProductConverters::class)

@@ -1,4 +1,4 @@
-package com.max.foodies.network.pojo
+package com.max.foodies.model.network.pojo
 
 import com.google.gson.annotations.SerializedName
 

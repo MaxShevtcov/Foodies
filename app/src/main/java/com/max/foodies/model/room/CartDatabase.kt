@@ -1,4 +1,4 @@
-package com.max.foodies.room
+package com.max.foodies.model.room
 
 import android.content.Context
 import androidx.room.Database

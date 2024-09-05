@@ -4,7 +4,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.max.foodies.network.pojo.Category
+import com.max.foodies.model.network.pojo.Category
 
 @Composable
 fun CategoriesList(

@@ -1,4 +1,4 @@
-package com.max.foodies.room
+package com.max.foodies.model.room
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -11,7 +11,7 @@ interface CartDao {
     suspend fun insert(productInCart: ProductInCart)
 
     @Delete
-    suspend fun delete(productInCart:ProductInCart)
+    suspend fun delete(productInCart: ProductInCart)
 
     @Query("DELETE FROM cart_table")
     suspend fun deleteAll()

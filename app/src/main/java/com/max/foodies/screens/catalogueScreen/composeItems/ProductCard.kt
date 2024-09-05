@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.max.foodies.network.pojo.Product
+import com.max.foodies.model.network.pojo.Product
 import com.max.foodies.utils.priceConverterUtil
 
 @OptIn(ExperimentalGlideComposeApi::class)

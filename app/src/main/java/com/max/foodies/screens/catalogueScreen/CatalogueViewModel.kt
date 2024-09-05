@@ -1,17 +1,18 @@
-package com.max.foodies
+package com.max.foodies.screens.catalogueScreen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras import com.max.foodies.mappers.toProduct
-import com.max.foodies.mappers.toProductInCatalogue
-import com.max.foodies.network.FoodiesApi
-import com.max.foodies.network.pojo.Category
-import com.max.foodies.network.pojo.Product
-import com.max.foodies.room.catalogueDatabase.CatalogueDatabase
-import com.max.foodies.screens.catalogueScreen.CatalogueState
+import androidx.lifecycle.viewmodel.CreationExtras
+import com.max.foodies.model.CatalogueRepository
+import com.max.foodies.model.mappers.toProduct
+import com.max.foodies.model.mappers.toProductInCatalogue
+import com.max.foodies.model.network.FoodiesApi
+import com.max.foodies.model.network.pojo.Category
+import com.max.foodies.model.network.pojo.Product
+import com.max.foodies.model.room.catalogueDatabase.CatalogueDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -31,7 +32,7 @@ class CatalogueViewModel(
 
     private val concatenatedFilteredProducts: MutableStateFlow<List<Product>> =
         MutableStateFlow(emptyList())
-    private val searchedProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
+
 
     init {
         updateCatalogueState()
@@ -82,46 +83,6 @@ class CatalogueViewModel(
             category.selected = selected
             filterProducts(category, selected)
         }
-    }
-
-    fun onSearchTextChange(text: String) {
-        filterSearchedProducts()
-        _catalogueState.update {
-            it.copy(
-                searchText = text,
-            )
-        }
-    }
-
-    fun onToogleSearch() {
-        val isSearching = _catalogueState.value.isSearching
-        _catalogueState.update {
-            it.copy(
-                isSearching = !isSearching
-            )
-        }
-    }
-
-    private fun filterSearchedProducts() {
-        viewModelScope.launch(Dispatchers.Default) {
-            val products = catalogueRepository.getProductsFormDb().map { it.toProduct() }
-            searchedProducts.value = _catalogueState.value.products.filter { product ->
-                product.name?.uppercase()?.contains(
-                    _catalogueState.value.searchText.trim().uppercase()
-                )
-                    ?: false
-            }
-            _catalogueState.update {
-                it.copy(
-                    products = when {
-                        _catalogueState.value.searchText.isNotBlank() -> searchedProducts.value
-                        concatenatedFilteredProducts.value.isNotEmpty() -> concatenatedFilteredProducts.value
-                        else -> products
-                    }
-                )
-            }
-        }
-
     }
 
     companion object {
