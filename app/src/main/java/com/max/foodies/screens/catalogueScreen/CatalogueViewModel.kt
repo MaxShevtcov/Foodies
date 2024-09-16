@@ -6,10 +6,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.max.foodies.model.CatalogueRepository
+import com.max.foodies.model.CategoryRepository
+import com.max.foodies.model.ProductsRepository
 import com.max.foodies.model.mappers.toProduct
 import com.max.foodies.model.mappers.toProductInCatalogue
-import com.max.foodies.model.network.FoodiesApi
+import com.max.foodies.model.network.Retrofit
 import com.max.foodies.model.network.pojo.Category
 import com.max.foodies.model.network.pojo.Product
 import com.max.foodies.model.room.catalogueDatabase.CatalogueDatabase
@@ -23,7 +24,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CatalogueViewModel(
-    private val catalogueRepository: CatalogueRepository,
+    private val productsRepository: ProductsRepository,
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
     private val _catalogueState: MutableStateFlow<CatalogueState> =
@@ -40,15 +42,15 @@ class CatalogueViewModel(
 
     private fun insertProducts(products:List<Product>) {
         viewModelScope.launch(Dispatchers.IO) {
-            catalogueRepository.insertAll(products.map { it.toProductInCatalogue() })
+            productsRepository.insertAll(products.map { it.toProductInCatalogue() })
         }
     }
 
     private fun updateCatalogueState() {
         viewModelScope.launch(Dispatchers.Default) {
-            val products = catalogueRepository.getProducts()
+            val products = productsRepository.getProducts()
             Log.e("!!!", "product: $products")
-            val categories = catalogueRepository.getCategories()
+            val categories = categoryRepository.getCategories()
             Log.e("!!!", "categories: $categories")
             insertProducts(products)
             _catalogueState.update {
@@ -62,7 +64,7 @@ class CatalogueViewModel(
 
     private fun filterProducts(category: Category, selected: Boolean) {
         viewModelScope.launch(Dispatchers.Default) {
-            val products = catalogueRepository.getProductsFormDb().map { it.toProduct() }
+            val products = productsRepository.getProductsFormDb().map { it.toProduct() }
             val filteredProducts = products.filter { product -> product.categoryId == category.id }
 
             if (selected) {
@@ -95,13 +97,17 @@ class CatalogueViewModel(
                     if (modelClass.isAssignableFrom(CatalogueViewModel::class.java)) {
                         val application = checkNotNull(extras[APPLICATION_KEY])
                         val applicationScope = CoroutineScope(SupervisorJob())
-                        val catalogueRepository = CatalogueRepository(
+                        val productsRepository = ProductsRepository(
                             localDataSource = CatalogueDatabase.getInstance(application.applicationContext, applicationScope)
                                 .catalogueDao(),
-                            networkDataSource = FoodiesApi.foodiesApiService
+                            networkDataSource = Retrofit.productsApi
+                        )
+                        val categoryRepository = CategoryRepository(
+                            networkDataSource = Retrofit.categoriesApi
                         )
                         return CatalogueViewModel(
-                            catalogueRepository = catalogueRepository
+                            productsRepository = productsRepository,
+                            categoryRepository = categoryRepository
                         ) as T
                     }
                     throw IllegalArgumentException("Unknown ViewModel")

@@ -5,12 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.max.foodies.model.CatalogueRepository
+import com.max.foodies.model.ProductsRepository
 import com.max.foodies.model.mappers.toProduct
-import com.max.foodies.model.network.FoodiesApi
+import com.max.foodies.model.network.Retrofit
 import com.max.foodies.model.network.pojo.Product
 import com.max.foodies.model.room.catalogueDatabase.CatalogueDatabase
-import com.max.foodies.screens.catalogueScreen.CatalogueViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
-    private val catalogueRepository: CatalogueRepository
+    private val productsRepository: ProductsRepository
 ) : ViewModel() {
 
     private val _searchUiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
@@ -48,7 +47,7 @@ class SearchViewModel(
 
     private fun filterSearchedProducts() {
         viewModelScope.launch(Dispatchers.Default) {
-            val products = catalogueRepository.getProductsFormDb().map { it.toProduct() }
+            val products = productsRepository.getProductsFormDb().map { it.toProduct() }
             searchedProducts.value = products.filter { product ->
                 product.name?.uppercase()?.contains(
                     _searchUiState.value.searchText.trim().uppercase()
@@ -74,16 +73,16 @@ class SearchViewModel(
                     if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
                         val application = checkNotNull(extras[APPLICATION_KEY])
                         val applicationScope = CoroutineScope(SupervisorJob())
-                        val catalogueRepository = CatalogueRepository(
+                        val productsRepository = ProductsRepository(
                             localDataSource = CatalogueDatabase.getInstance(
                                 application.applicationContext,
                                 applicationScope
                             )
                                 .catalogueDao(),
-                            networkDataSource = FoodiesApi.foodiesApiService
+                            networkDataSource = Retrofit.productsApi
                         )
                         return SearchViewModel(
-                            catalogueRepository = catalogueRepository
+                            productsRepository = productsRepository
                         ) as T
                     }
                     throw IllegalArgumentException("Unknown ViewModel")

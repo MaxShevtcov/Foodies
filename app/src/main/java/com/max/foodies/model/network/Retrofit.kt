@@ -8,21 +8,32 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 private const val BASE_URL = "https://anika1d.github.io/WorkTestServer/"
-interface FoodiesApiService {
+interface CategoriesApi {
     @GET("Categories.json")
     suspend fun getCategories(): List<Category>
-    @GET("Tag.json")
-    suspend fun getTags(): List<Tag>
+}
+interface ProductsApi {
+
     @GET("Products.json")
     suspend fun getProducts(): List<Product>
 }
+interface TagsApi {
+    @GET("Tag.json")
+    suspend fun getTags(): List<Tag>
+}
 
-object FoodiesApi {
+object Retrofit {
     val retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(BASE_URL)
         .build()
-    val foodiesApiService: FoodiesApiService by lazy {
-        retrofit.create(FoodiesApiService::class.java)
+    val categoriesApi: CategoriesApi by lazy {
+        retrofit.create(CategoriesApi::class.java)
+    }
+    val productsApi: ProductsApi by lazy {
+        retrofit.create(ProductsApi::class.java)
+    }
+    val tagsApi: TagsApi by lazy {
+        retrofit.create(TagsApi::class.java)
     }
 }
