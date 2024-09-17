@@ -10,14 +10,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.max.foodies.model.network.pojo.Category
+import com.max.foodies.data.network.pojo.Category
+import com.max.foodies.screens.UiCategory
 import com.max.foodies.ui.theme.Orange
 
 @Composable
 fun CategoryButton(
     modifier: Modifier,
-    category: Category,
-    onSelected: (Category, Boolean) -> Unit,
+    category: UiCategory,
+    onSelected: (UiCategory, Boolean) -> Unit,
     selected: Boolean
 ) {
     if (selected) {

@@ -28,11 +28,13 @@ fun SearchScreen(
     onBackPressed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val searchScreenState = searchScreenViewModel.searchUiState.collectAsState()
+    val uiProducts = searchScreenViewModel.uiProducts.collectAsState()
+    val searchText = searchScreenViewModel.searchText.collectAsState()
+    val isSearching = searchScreenViewModel.isSearching.collectAsState()
     Column(modifier = modifier.fillMaxSize()) {
         SearchScreenTopBar(
-            searchText = searchScreenState.value.searchText,
-            isSearching = searchScreenState.value.isSearching,
+            searchText = searchText.value,
+            isSearching = isSearching.value,
             onSearchTextChange = { query -> searchScreenViewModel.onSearchTextChange(query) },
             onToogleSearch = { searchScreenViewModel.onToogleSearch() },
             onBackPressed = { onBackPressed() },
@@ -46,10 +48,10 @@ fun SearchScreen(
                 .shadow(elevation = 4.dp)
                 .background(color = MaterialTheme.colorScheme.background)
         )
-        if (searchScreenState.value.searchText.isNotBlank()) {
+        if (searchText.value.isNotBlank()) {
             ProductsList(
                 modifier = modifier,
-                products = searchScreenState.value.products
+                products = uiProducts.value
             )
         } else {
             Text(

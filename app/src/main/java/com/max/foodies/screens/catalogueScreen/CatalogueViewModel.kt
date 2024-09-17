@@ -1,19 +1,16 @@
 package com.max.foodies.screens.catalogueScreen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.max.foodies.model.CategoryRepository
-import com.max.foodies.model.ProductsRepository
-import com.max.foodies.model.mappers.toProduct
-import com.max.foodies.model.mappers.toProductInCatalogue
-import com.max.foodies.model.network.Retrofit
-import com.max.foodies.model.network.pojo.Category
-import com.max.foodies.model.network.pojo.Product
-import com.max.foodies.model.room.catalogueDatabase.CatalogueDatabase
+import com.max.foodies.data.CategoryRepository
+import com.max.foodies.data.ProductsRepository
+import com.max.foodies.data.network.Retrofit
+import com.max.foodies.data.room.roomDatabase.FoodiesDatabase
+import com.max.foodies.screens.UiCategory
+import com.max.foodies.screens.UiProduct
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,43 +25,42 @@ class CatalogueViewModel(
     private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
-    private val _catalogueState: MutableStateFlow<CatalogueState> =
-        MutableStateFlow(CatalogueState())
-    val catalogueState: StateFlow<CatalogueState> = _catalogueState.asStateFlow()
+    private val _uiProducts: MutableStateFlow<List<UiProduct>> =
+        MutableStateFlow(emptyList())
+    val uiProducts: StateFlow<List<UiProduct>> = _uiProducts.asStateFlow()
 
-    private val concatenatedFilteredProducts: MutableStateFlow<List<Product>> =
+    private val _uiCategories: MutableStateFlow<List<UiCategory>> =
+        MutableStateFlow(emptyList())
+    val uiCategories: StateFlow<List<UiCategory>> = _uiCategories.asStateFlow()
+
+    private val concatenatedFilteredProducts: MutableStateFlow<List<UiProduct>> =
         MutableStateFlow(emptyList())
 
 
     init {
-        updateCatalogueState()
-    }
+        viewModelScope.launch {
 
-    private fun insertProducts(products:List<Product>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            productsRepository.insertAll(products.map { it.toProductInCatalogue() })
-        }
-    }
-
-    private fun updateCatalogueState() {
-        viewModelScope.launch(Dispatchers.Default) {
-            val products = productsRepository.getProducts()
-            Log.e("!!!", "product: $products")
-            val categories = categoryRepository.getCategories()
-            Log.e("!!!", "categories: $categories")
-            insertProducts(products)
-            _catalogueState.update {
-                it.copy(
-                    products = products,
-                    categories = categories,
-                )
+            _uiProducts.update {
+                updateProducts(true)
+            }
+            _uiCategories.update {
+                updateCategories()
             }
         }
+
     }
 
-    private fun filterProducts(category: Category, selected: Boolean) {
+    private suspend fun updateProducts(forceUpdate: Boolean): List<UiProduct> {
+        return productsRepository.invoke(forceUpdate)
+    }
+
+    private suspend fun updateCategories(): List<UiCategory> {
+        return categoryRepository.getCategories()
+    }
+
+    private fun filterProducts(category: UiCategory, selected: Boolean) {
         viewModelScope.launch(Dispatchers.Default) {
-            val products = productsRepository.getProductsFormDb().map { it.toProduct() }
+            val products = updateProducts(forceUpdate = true)
             val filteredProducts = products.filter { product -> product.categoryId == category.id }
 
             if (selected) {
@@ -74,14 +70,15 @@ class CatalogueViewModel(
                 concatenatedFilteredProducts.value =
                     concatenatedFilteredProducts.value.minus(filteredProducts.toSet())
             }
-            _catalogueState.update {
-                it.copy(products = concatenatedFilteredProducts.value.ifEmpty { products })
+            _uiProducts.update {
+                concatenatedFilteredProducts.value.ifEmpty { products }
             }
+
         }
     }
 
-    fun selectCategory(item: Category, selected: Boolean) {
-        _catalogueState.value.categories.find { it.id == item.id }?.let { category ->
+    fun selectCategory(item: UiCategory, selected: Boolean) {
+        _uiCategories.value.find { it.id == item.id }?.let { category ->
             category.selected = selected
             filterProducts(category, selected)
         }
@@ -98,11 +95,18 @@ class CatalogueViewModel(
                         val application = checkNotNull(extras[APPLICATION_KEY])
                         val applicationScope = CoroutineScope(SupervisorJob())
                         val productsRepository = ProductsRepository(
-                            localDataSource = CatalogueDatabase.getInstance(application.applicationContext, applicationScope)
-                                .catalogueDao(),
+                            localDataSource = FoodiesDatabase.getInstance(
+                                application.applicationContext,
+                                applicationScope
+                            )
+                                .productDao(),
                             networkDataSource = Retrofit.productsApi
                         )
                         val categoryRepository = CategoryRepository(
+                            localDataSource = FoodiesDatabase.getInstance(
+                                application.applicationContext,
+                                applicationScope
+                            ).categoryDao(),
                             networkDataSource = Retrofit.categoriesApi
                         )
                         return CatalogueViewModel(

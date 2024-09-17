@@ -21,7 +21,8 @@ fun CatalogueScreen(
     onNavigateToSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val catalogueScreenState = catalogueViewModel.catalogueState.collectAsState()
+    val uiProduct = catalogueViewModel.uiProducts.collectAsState()
+    val uiCategories = catalogueViewModel.uiCategories.collectAsState()
     Column {
         CatalogueTopBar(
             onNavigateToSearch =  {onNavigateToSearch()} ,
@@ -30,7 +31,7 @@ fun CatalogueScreen(
 
         CategoriesList(
             modifier = modifier,
-            categories = catalogueScreenState.value.categories,
+            categories = uiCategories.value,
             onSelected = { category, selected ->
                 catalogueViewModel.selectCategory(
                     category,
@@ -38,7 +39,7 @@ fun CatalogueScreen(
                 )
             }
         )
-        ProductsList(modifier = modifier, products = catalogueScreenState.value.products)
+        ProductsList(modifier = modifier, products = uiProduct.value)
     }
 
 }

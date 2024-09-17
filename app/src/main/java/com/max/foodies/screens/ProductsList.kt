@@ -5,10 +5,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.max.foodies.model.network.pojo.Product
+import com.max.foodies.data.network.pojo.Product
 
 @Composable
-fun ProductsList(modifier: Modifier, products: List<Product>) {
+fun ProductsList(modifier: Modifier, products: List<UiProduct>) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(2)
