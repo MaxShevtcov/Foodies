@@ -16,12 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.max.foodies.model.network.pojo.Product
+import com.max.foodies.data.network.pojo.Product
 import com.max.foodies.utils.priceConverterUtil
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProductCard(modifier: Modifier, product: Product) {
+fun ProductCard(modifier: Modifier, product: UiProduct) {
     Card(
         modifier
             .padding(8.dp)
@@ -48,5 +48,5 @@ fun ProductCard(modifier: Modifier, product: Product) {
 @Preview(showBackground = true, widthDp = 160)
 @Composable
 fun ProductCardPreview() {
-    ProductCard(modifier = Modifier, product = Product())
+    ProductCard(modifier = Modifier, product = UiProduct())
 }
