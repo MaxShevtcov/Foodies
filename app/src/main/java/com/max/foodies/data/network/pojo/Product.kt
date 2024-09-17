@@ -1,8 +1,5 @@
-package com.max.foodies.model.network.pojo
+package com.max.foodies.data.network.pojo
 
-import android.os.Parcel
-import android.os.Parcelable
-import androidx.room.TypeConverter
 import com.google.gson.annotations.SerializedName
 
 data class Product(

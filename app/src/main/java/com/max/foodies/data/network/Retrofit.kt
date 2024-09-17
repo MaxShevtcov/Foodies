@@ -1,8 +1,8 @@
-package com.max.foodies.model.network
+package com.max.foodies.data.network
 
-import com.max.foodies.model.network.pojo.Category
-import com.max.foodies.model.network.pojo.Product
-import com.max.foodies.model.network.pojo.Tag
+import com.max.foodies.data.network.pojo.Category
+import com.max.foodies.data.network.pojo.Product
+import com.max.foodies.data.network.pojo.Tag
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET

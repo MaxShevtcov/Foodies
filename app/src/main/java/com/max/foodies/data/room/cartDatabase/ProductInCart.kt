@@ -1,11 +1,11 @@
-package com.max.foodies.model.room
+move filespackage com.max.foodies.data.room.cartDatabase
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.max.foodies.model.network.pojo.Product
+import com.max.foodies.data.network.pojo.Product
 
 @Entity(tableName = "cart_table")
 @TypeConverters(ProductConverters::class)
