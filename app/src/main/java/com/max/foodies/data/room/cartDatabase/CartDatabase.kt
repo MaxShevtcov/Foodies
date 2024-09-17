@@ -1,5 +1,6 @@
 package com.max.foodies.data.room.cartDatabase
 
+import ProductInCart
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room

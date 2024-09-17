@@ -1,4 +1,5 @@
-move filespackage com.max.foodies.data.room.cartDatabase
+import com.max.foodies.data.room.cartDatabase.ProductConverters
+
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded

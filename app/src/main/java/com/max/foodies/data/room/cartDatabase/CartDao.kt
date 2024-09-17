@@ -1,5 +1,6 @@
 package com.max.foodies.data.room.cartDatabase
 
+import ProductInCart
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
