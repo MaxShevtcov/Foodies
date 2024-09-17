@@ -24,9 +24,9 @@ import com.max.foodies.screens.searchScreen.composeItems.SearchScreenTopBar
 
 @Composable
 fun SearchScreen(
+    modifier: Modifier = Modifier,
     searchScreenViewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory),
     onBackPressed: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val uiProducts = searchScreenViewModel.uiProducts.collectAsState()
     val searchText = searchScreenViewModel.searchText.collectAsState()

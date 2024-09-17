@@ -1,4 +1,4 @@
-package com.max.foodies.data.room.cartDatabase
+package com.max.foodies.data.room
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
