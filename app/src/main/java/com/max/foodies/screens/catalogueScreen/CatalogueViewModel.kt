@@ -60,7 +60,7 @@ class CatalogueViewModel(
 
     private fun filterProducts(category: UiCategory, selected: Boolean) {
         viewModelScope.launch(Dispatchers.Default) {
-            val products = updateProducts(forceUpdate = true)
+            val products = updateProducts(forceUpdate = false)
             val filteredProducts = products.filter { product -> product.categoryId == category.id }
 
             if (selected) {
