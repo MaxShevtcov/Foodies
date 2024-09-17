@@ -1,14 +1,14 @@
-package com.max.foodies.model.room.catalogueDatabase
+package com.max.foodies.data.room.roomDatabase
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.max.foodies.model.room.ProductConverters
+import com.max.foodies.data.room.cartDatabase.ProductConverters
 
-@Entity(tableName = "catalogue_table")
+@Entity(tableName = "dbProduct_table")
 @TypeConverters(ProductConverters::class)
-data class ProductInCatalogue(
+data class DbProduct(
     @PrimaryKey(autoGenerate = false)
     val id: Int? = null,
     @ColumnInfo("category_id")
