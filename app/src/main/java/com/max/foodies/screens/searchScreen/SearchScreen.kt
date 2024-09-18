@@ -27,6 +27,7 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     searchScreenViewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory),
     onBackPressed: () -> Unit,
+    onNavigateToProduct: (id:Int?) -> Unit,
 ) {
     val uiProducts = searchScreenViewModel.uiProducts.collectAsState()
     val searchText = searchScreenViewModel.searchText.collectAsState()
@@ -51,7 +52,8 @@ fun SearchScreen(
         if (searchText.value.isNotBlank()) {
             ProductsList(
                 modifier = modifier,
-                products = uiProducts.value
+                products = uiProducts.value,
+                onNavigateToProduct = onNavigateToProduct
             )
         } else {
             Text(
@@ -72,5 +74,5 @@ fun SearchScreen(
 @Preview
 @Composable
 fun SearchScreenPreview() {
-    SearchScreen(onBackPressed = {})
+    SearchScreen(onBackPressed = {}, onNavigateToProduct = {})
 }

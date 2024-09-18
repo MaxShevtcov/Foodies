@@ -13,7 +13,6 @@ interface CategoriesApi {
     suspend fun getCategories(): List<Category>
 }
 interface ProductsApi {
-
     @GET("Products.json")
     suspend fun getProducts(): List<Product>
 }

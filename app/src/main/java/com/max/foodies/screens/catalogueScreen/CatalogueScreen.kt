@@ -19,13 +19,14 @@ import com.max.foodies.screens.catalogueScreen.composeItems.CategoriesList
 fun CatalogueScreen(
     catalogueViewModel: CatalogueViewModel = viewModel(factory = CatalogueViewModel.Factory),
     onNavigateToSearch: () -> Unit,
+    onNavigateToProduct: (id: Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiProduct = catalogueViewModel.uiProducts.collectAsState()
     val uiCategories = catalogueViewModel.uiCategories.collectAsState()
     Column {
         CatalogueTopBar(
-            onNavigateToSearch =  {onNavigateToSearch()} ,
+            onNavigateToSearch = { onNavigateToSearch() },
             modifier = modifier.height(72.dp)
         )
 
@@ -39,7 +40,11 @@ fun CatalogueScreen(
                 )
             }
         )
-        ProductsList(modifier = modifier, products = uiProduct.value)
+        ProductsList(
+            modifier = modifier,
+            products = uiProduct.value,
+            onNavigateToProduct = onNavigateToProduct
+        )
     }
 
 }
@@ -47,7 +52,7 @@ fun CatalogueScreen(
 @Preview(showBackground = true, widthDp = 320)
 @Composable
 fun CatalogueScreenPreview() {
-    CatalogueScreen(onNavigateToSearch = {})
+    CatalogueScreen(onNavigateToSearch = {}, onNavigateToProduct = {})
 }
 
 

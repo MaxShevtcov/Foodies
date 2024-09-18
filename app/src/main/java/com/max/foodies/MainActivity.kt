@@ -30,7 +30,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation()
+                    val navController = rememberNavController()
+                    NavGraph(navController)
                 }
             }
         }
