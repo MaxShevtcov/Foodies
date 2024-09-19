@@ -6,70 +6,56 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.navigation.toRoute
 import com.max.foodies.NavRoute
 import com.max.foodies.data.ProductsRepository
 import com.max.foodies.data.network.Retrofit
 import com.max.foodies.data.room.roomDatabase.FoodiesDatabase
-import com.max.foodies.screens.UiCategory
 import com.max.foodies.screens.UiProduct
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
 
 class ProductViewModel(
     savedStateHandle: SavedStateHandle,
     private val productsRepository: ProductsRepository,
 ) : ViewModel() {
 
+    //private val productId: Int = checkNotNull(savedStateHandle[NavRoute.Product.id])
 
-    //    private val _uiProduct: MutableStateFlow<UiProduct> = MutableStateFlow(UiProduct())
-//    val uiProduct = _uiProduct.asStateFlow()
-//
-//    private val navProduct = savedStateHandle.toRoute<NavRoute.Product>()
-//
-//    init{
-//        getProduct()
-//    }
-//
-//    private fun getProduct() {
-//        viewModelScope.launch {
-//            val product: Deferred<UiProduct> = viewModelScope.async {
-//                updateProducts(false)[navProduct.id.toInt()]
-//            }
-//            _uiProduct.update {
-//                product.await()
-//            }
-//        }
-//    }
-    private val _uiProducts: MutableStateFlow<List<UiProduct>> =
-        MutableStateFlow(emptyList())
-    val uiProducts: StateFlow<List<UiProduct>> = _uiProducts.asStateFlow()
+//    val uiProduct: StateFlow<UiProduct> = getProductById(productId.toInt())
+//        .filterNotNull()
+//        .stateIn(
+//            scope = viewModelScope,
+//            started = WhileSubscribed(),
+//            initialValue = UiProduct()
+//        )
 
 
-    init {
-        viewModelScope.launch {
+     fun getProductById(id: Int): StateFlow<UiProduct> = flow {
+        val product = productsRepository.getProductById(id)
+        emit(product)
+    }.stateIn(
+            scope = viewModelScope,
+            started = WhileSubscribed(),
+            initialValue = UiProduct()
+        )
+//    fun getProductBiId(id:Int) = viewModelScope.async {
+//    val product = productsRepository.getProductById(id)
+//    return@async product
+//}
 
-            _uiProducts.update {
-                updateProducts(false)
-            }
-        }
-
-    }
-
-    private suspend
-    fun updateProducts(forceUpdate: Boolean): List<UiProduct> {
-        return productsRepository.invoke(forceUpdate)
-    }
-
-    companion
-    object {
+    companion object {
         val Factory: ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(

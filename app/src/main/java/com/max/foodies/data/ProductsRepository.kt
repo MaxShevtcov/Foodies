@@ -8,6 +8,8 @@ import com.max.foodies.data.network.pojo.Product
 import com.max.foodies.data.room.roomDatabase.ProductDao
 import com.max.foodies.data.room.roomDatabase.DbProduct
 import com.max.foodies.screens.UiProduct
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 
 class ProductsRepository(
@@ -39,5 +41,10 @@ class ProductsRepository(
     private suspend fun getProductsFormDb(): List<DbProduct> {
         return localDataSource.get()
     }
+
+    suspend fun getProductById(id:Int): UiProduct {
+        return localDataSource.getById(id).toUiProduct()
+    }
 }
+
 

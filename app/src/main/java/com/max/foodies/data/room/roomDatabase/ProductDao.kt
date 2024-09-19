@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
@@ -19,6 +20,9 @@ interface ProductDao {
 
     @Query("SELECT * FROM dbProduct_table")
     suspend fun get(): List<DbProduct>
+
+    @Query("SELECT * FROM dbProduct_table WHERE id = :id")
+    suspend fun getById(id:Int): DbProduct
 
     @Query("DELETE FROM dbProduct_table")
     suspend fun deleteAll()

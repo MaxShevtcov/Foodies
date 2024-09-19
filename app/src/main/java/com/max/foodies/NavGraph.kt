@@ -110,7 +110,7 @@ private fun addProductScreen(
     navGraphBuilder: NavGraphBuilder
 ) {
     navGraphBuilder.composable(
-        route = NavRoute.Product.withArgsFormat(NavRoute.Product.id, ),
+        route = NavRoute.Product.withArgsFormat(NavRoute.Product.id),
         arguments = listOf(
             navArgument(NavRoute.Product.id) {
                 type = NavType.IntType
