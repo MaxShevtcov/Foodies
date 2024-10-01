@@ -11,5 +11,9 @@ data class UiProduct(
     val priceOld: String? = null,
     val measure: Int? = null,
     val measureUnit: String? = null,
+    val energyPer100Grams: Double? = null,
+    val proteinsPer100Grams : Double? = null ,
+    val fatsPer100Grams : Double? = null ,
+    val carbohydratesPer100Grams : Double? = null ,
     var tagIds: List<String>? = emptyList(),
 )

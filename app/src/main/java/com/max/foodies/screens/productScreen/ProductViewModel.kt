@@ -27,33 +27,23 @@ import kotlinx.coroutines.runBlocking
 
 
 class ProductViewModel(
-    savedStateHandle: SavedStateHandle,
     private val productsRepository: ProductsRepository,
 ) : ViewModel() {
 
-    //private val productId: Int = checkNotNull(savedStateHandle[NavRoute.Product.id])
-
-//    val uiProduct: StateFlow<UiProduct> = getProductById(productId.toInt())
-//        .filterNotNull()
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = WhileSubscribed(),
-//            initialValue = UiProduct()
-//        )
 
 
-     fun getProductById(id: Int): StateFlow<UiProduct> = flow {
+
+
+    fun getProductById(id: Int): StateFlow<UiProduct> = flow {
         val product = productsRepository.getProductById(id)
         emit(product)
     }.stateIn(
-            scope = viewModelScope,
-            started = WhileSubscribed(),
-            initialValue = UiProduct()
-        )
-//    fun getProductBiId(id:Int) = viewModelScope.async {
-//    val product = productsRepository.getProductById(id)
-//    return@async product
-//}
+        scope = viewModelScope,
+        started = WhileSubscribed(),
+        initialValue = UiProduct()
+    )
+
+
 
     companion object {
         val Factory: ViewModelProvider.Factory =
@@ -75,7 +65,6 @@ class ProductViewModel(
                         )
 
                         return ProductViewModel(
-                            savedStateHandle = SavedStateHandle(),
                             productsRepository = productsRepository
                         ) as T
                     }
