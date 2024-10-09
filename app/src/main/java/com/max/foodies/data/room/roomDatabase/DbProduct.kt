@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.max.foodies.data.room.ProductConverters
 
-@Entity(tableName = "dbProduct_table")
+@Entity
 @TypeConverters(ProductConverters::class)
 data class DbProduct(
     @PrimaryKey(autoGenerate = false)

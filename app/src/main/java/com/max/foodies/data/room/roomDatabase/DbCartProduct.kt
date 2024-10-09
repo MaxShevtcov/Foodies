@@ -5,9 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class DbCategory(
+data class DbCartProduct(
     @PrimaryKey(autoGenerate = false)
-    val id: Int? = null,
-    @ColumnInfo("name")
-    val name: String? = null,
+    val productId: Int? = null,
+    @ColumnInfo(name = "product_count")
+    val productCount: Int? = null
 )
