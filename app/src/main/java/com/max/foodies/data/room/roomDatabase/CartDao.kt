@@ -4,15 +4,20 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
+import retrofit2.http.GET
 
 @Dao
 interface CartDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(dbCartProduct: DbCartProduct)
+    suspend fun insert(dbCartCounter: DbCartCounter)
 
-    @Query("SELECT * FROM dbproduct" + " JOIN dbCartProduct ON dbProduct.id = dbCartProduct.productId")
-    suspend fun getProductAndCountInCart(): Map<DbProduct, DbCartProduct>
+    @Query("SELECT * FROM dbproduct" + " JOIN dbCartCounter ON dbProduct.id = dbCartCounter.productId")
+    suspend fun getProductAndCountInCart(): List<ProductWithCountInCart>
 
-    @Query("DELETE FROM dbCartProduct")
+    @Query("SELECT * FROM dbCartCounter")
+     fun getCartCounter(): Flow<List<DbCartCounter>>
+
+    @Query("DELETE FROM dbCartCounter")
     suspend fun deleteAll()
 }

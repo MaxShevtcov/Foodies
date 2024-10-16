@@ -9,7 +9,7 @@ import com.max.foodies.data.room.ProductConverters
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [DbProduct::class, DbCategory::class, DbCartProduct::class], version = 1, exportSchema = false)
+@Database(entities = [DbProduct::class, DbCategory::class, DbCartCounter::class], version = 1, exportSchema = false)
 abstract class FoodiesDatabase : RoomDatabase() {
 
     abstract fun productDao(): ProductDao
@@ -35,9 +35,9 @@ abstract class FoodiesDatabase : RoomDatabase() {
 
         private class FoodiesDatabaseCallback(
             private val scope: CoroutineScope
-        ) : Callback() {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
+        ) : RoomDatabase.Callback() {
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
                 INSTANCE?.let {database -> scope.launch { populateDatabase(database.productDao(), database.categoryDao(), database.cartDao()) } }
             }
         }
@@ -45,7 +45,7 @@ abstract class FoodiesDatabase : RoomDatabase() {
         suspend fun populateDatabase(productDao: ProductDao, categoryDao: CategoryDao, cartDao: CartDao) {
             productDao.deleteAll()
             categoryDao.deleteAll()
-            categoryDao.deleteAll()
+            cartDao.deleteAll()
         }
     }
 }

@@ -17,9 +17,9 @@ interface CategoryDao {
     @Delete
     suspend fun delete(dbCategory: DbCategory)
 
-    @Query("SELECT * FROM dbCategory_table")
+    @Query("SELECT * FROM dbCategory")
     suspend fun get(): List<DbCategory>
 
-    @Query("DELETE FROM dbCategory_table")
+    @Query("DELETE FROM dbCategory")
     suspend fun deleteAll()
 }
