@@ -12,7 +12,8 @@ import com.max.foodies.data.network.pojo.Product
 fun ProductsList(
     modifier: Modifier,
     products: List<UiProduct>,
-    onNavigateToProduct: (id:Int?) -> Unit
+    onNavigateToProduct: (id: Int?) -> Unit,
+    onAddProductToCart: (uiProduct:UiProduct) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -22,7 +23,12 @@ fun ProductsList(
             items = products,
             key = { product -> product.id!! }
         ) { product ->
-            ProductCard(modifier = modifier.clickable { onNavigateToProduct(product.id) }, product = product,)
+            ProductCard(
+                modifier = modifier.clickable { onNavigateToProduct(product.id) },
+                product = product,
+                onNavigateToProduct = onNavigateToProduct,
+                onAddProductToCart = onAddProductToCart,
+            )
 
         }
     }

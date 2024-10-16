@@ -15,16 +15,16 @@ class CategoryRepository(
     private val networkDataSource: CategoriesApi,
     private val localDataSource: CategoryDao
 ) {
-    suspend fun getCategories(): List<UiCategory> {
-        try {
-            return networkDataSource.getCategories().map { it.toUiCategory() }
-        } catch (e: Exception) {
-            Log.e("!!!", "$e")
-        }
-        return emptyList()
-    }
+//    suspend fun getCategories(): List<UiCategory> {
+//        try {
+//            return networkDataSource.getCategories().map { it.toUiCategory() }
+//        } catch (e: Exception) {
+//            Log.e("!!!", "$e")
+//        }
+//        return emptyList()
+//    }
 
-    suspend fun invoke(forceUpdate: Boolean): List<UiCategory> {
+    suspend operator fun invoke(forceUpdate: Boolean): List<UiCategory> {
         return if (forceUpdate) {
             insertAll(getCategoriesFormApi().map { it.toDbCategory() })
             getCategoriesFormDb().map { it.toUiCategory() }

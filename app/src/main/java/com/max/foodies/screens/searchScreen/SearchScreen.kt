@@ -53,7 +53,8 @@ fun SearchScreen(
             ProductsList(
                 modifier = modifier,
                 products = uiProducts.value,
-                onNavigateToProduct = onNavigateToProduct
+                onNavigateToProduct = onNavigateToProduct,
+                onAddProductToCart = {/*add fun: addProductIncart*/},
             )
         } else {
             Text(

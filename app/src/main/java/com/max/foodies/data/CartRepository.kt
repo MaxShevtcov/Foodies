@@ -1,21 +1,37 @@
 package com.max.foodies.data
 
-import com.max.foodies.data.mappers.toDbCartProduct
+import android.util.Log
+import com.max.foodies.data.mappers.toDbCartCounter
+import com.max.foodies.data.mappers.toUiProductInCart
 import com.max.foodies.data.room.roomDatabase.CartDao
-import com.max.foodies.data.room.roomDatabase.DbCartProduct
-import com.max.foodies.data.room.roomDatabase.DbProduct
+import com.max.foodies.data.room.roomDatabase.DbCartCounter
 import com.max.foodies.screens.UiCartProduct
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 class CartRepository(
-    //private val localProductDataSource: ProductDao,
     private val localCartDataSource: CartDao
 ) {
-    suspend fun insertProductInCart(uiCartProduct: UiCartProduct) {
-        val dbCartProduct = uiCartProduct.toDbCartProduct()
-        localCartDataSource.insert(dbCartProduct)
+
+
+    suspend fun insertProductInCart(dbCartCounter: DbCartCounter) {
+        val dbCartCounter = dbCartCounter
+        localCartDataSource.insert(dbCartCounter)
     }
 
-    suspend fun getProductAndCountInCart(): Map<DbProduct, DbCartProduct> {
-        return localCartDataSource.getProductAndCountInCart()
+    suspend fun getProductAndCountInCart(): List<UiCartProduct> {
+        return localCartDataSource.getProductAndCountInCart().map { it.toUiProductInCart() }
+    }
+
+
+
+    fun checkCartEmpty():Flow<Boolean> {
+        return localCartDataSource.getCartCounter().map { cart ->
+            cart.isNullOrEmpty()
+        }
     }
 }

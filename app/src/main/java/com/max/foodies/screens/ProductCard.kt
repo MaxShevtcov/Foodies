@@ -20,7 +20,12 @@ import com.max.foodies.utils.priceConverterUtil
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProductCard(modifier: Modifier, product: UiProduct) {
+fun ProductCard(
+    modifier: Modifier,
+    product: UiProduct,
+    onNavigateToProduct: (id: Int?) -> Unit,
+    onAddProductToCart: (uiProduct: UiProduct) -> Unit
+) {
     Card(
         modifier
             .padding(8.dp)
@@ -29,11 +34,16 @@ fun ProductCard(modifier: Modifier, product: UiProduct) {
         shape = CardDefaults.elevatedShape,
     ) {
         Column(modifier.padding(16.dp)) {
-            GlideImage(model ="https://i.ibb.co/Kwk25pz/Photo.png" , contentDescription = "Image of Food")
+            GlideImage(
+                model = "https://i.ibb.co/Kwk25pz/Photo.png",
+                contentDescription = "Image of Food"
+            )
             Text("${product.name}", modifier.weight(1f))
             Text("${product.measure} ${product.measureUnit}")
             ElevatedButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    onAddProductToCart(product)
+                },
                 modifier = modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(15),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
@@ -47,5 +57,10 @@ fun ProductCard(modifier: Modifier, product: UiProduct) {
 @Preview(showBackground = true, widthDp = 160)
 @Composable
 fun ProductCardPreview() {
-    ProductCard(modifier = Modifier, product = UiProduct())
+    ProductCard(
+        modifier = Modifier,
+        product = UiProduct(),
+        onNavigateToProduct = {},
+        onAddProductToCart = {}
+    )
 }

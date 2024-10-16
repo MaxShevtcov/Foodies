@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.max.foodies.data.ProductsRepository
 import com.max.foodies.data.network.Retrofit
-import com.max.foodies.data.network.pojo.Product
 import com.max.foodies.data.room.roomDatabase.FoodiesDatabase
 import com.max.foodies.screens.UiProduct
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +35,7 @@ class SearchViewModel(
     private val searchedProducts: MutableStateFlow<List<UiProduct>> = MutableStateFlow(emptyList())
 
     private suspend fun updateProducts(forceUpdate: Boolean): List<UiProduct> {
-        return productsRepository.invoke(forceUpdate)
+        return productsRepository.getProducts(forceUpdate)
     }
 
     fun onSearchTextChange(text: String) {

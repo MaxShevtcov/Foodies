@@ -1,6 +1,11 @@
 package com.max.foodies.screens
 
+import androidx.room.Embedded
+import com.max.foodies.data.room.roomDatabase.DbCartCounter
+import com.max.foodies.data.room.roomDatabase.DbProduct
+
 data class UiCartProduct(
-    val productId: Int?,
-    val productCount: Int?
+    @Embedded
+    val product: UiProduct,
+    val cartCounter: Int?
 )

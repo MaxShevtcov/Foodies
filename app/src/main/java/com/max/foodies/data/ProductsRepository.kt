@@ -8,15 +8,13 @@ import com.max.foodies.data.network.pojo.Product
 import com.max.foodies.data.room.roomDatabase.ProductDao
 import com.max.foodies.data.room.roomDatabase.DbProduct
 import com.max.foodies.screens.UiProduct
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 
 class ProductsRepository(
     private val networkDataSource: ProductsApi,
     private val localDataSource: ProductDao
 ) {
-    suspend fun invoke(forceUpdate: Boolean): List<UiProduct> {
+    suspend fun getProducts(forceUpdate: Boolean): List<UiProduct> {
         return if (forceUpdate) {
             insertAll(getProductsFormApi().map { it.toDbProduct() })
             getProductsFormDb().map { it.toUiProduct() }
