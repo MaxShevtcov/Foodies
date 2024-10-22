@@ -30,10 +30,6 @@ class ProductViewModel(
     private val productsRepository: ProductsRepository,
 ) : ViewModel() {
 
-
-
-
-
     fun getProductById(id: Int): StateFlow<UiProduct> = flow {
         val product = productsRepository.getProductById(id)
         emit(product)
@@ -42,8 +38,6 @@ class ProductViewModel(
         started = WhileSubscribed(),
         initialValue = UiProduct()
     )
-
-
 
     companion object {
         val Factory: ViewModelProvider.Factory =

@@ -1,6 +1,5 @@
 package com.max.foodies.screens.catalogueScreen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -18,11 +17,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -47,18 +43,20 @@ class CatalogueViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            val uiCategories = updateCategories(true)
             _uiCategories.update {
-                updateCategories(true)
+                uiCategories
             }
-
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            val uiProducts = updateProducts(true)
             _uiProducts.update {
-                updateProducts(true)
+                uiProducts
             }
         }
         viewModelScope.launch {
             cartRepository.checkCartEmpty().collect { value -> _isCartEmpty.update { value } }
         }
-
     }
 
     private suspend fun updateProducts(forceUpdate: Boolean): List<UiProduct> {
@@ -66,7 +64,7 @@ class CatalogueViewModel(
     }
 
     private suspend fun updateCategories(forceUpdate: Boolean): List<UiCategory> {
-        return categoryRepository.invoke(forceUpdate)
+        return categoryRepository.getCategories(forceUpdate)
     }
 
     private fun filterProducts(category: UiCategory, selected: Boolean) {

@@ -30,8 +30,9 @@ class CartViewModel(
 
     init {
         viewModelScope.launch {
+            val cartProducts = updateCartProducts()
             _uiCartProducts.update {
-                updateCartProducts()
+                cartProducts
             }
         }
 
