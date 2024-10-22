@@ -16,8 +16,9 @@ class ProductsRepository(
 ) {
     suspend fun getProducts(forceUpdate: Boolean): List<UiProduct> {
         return if (forceUpdate) {
-            insertAll(getProductsFormApi().map { it.toDbProduct() })
-            getProductsFormDb().map { it.toUiProduct() }
+            val products = getProductsFormApi()
+            insertAll(products.map { it.toDbProduct() })
+            products.map { it.toUiProduct() }
         } else {
             getProductsFormDb().map { it.toUiProduct() }
         }

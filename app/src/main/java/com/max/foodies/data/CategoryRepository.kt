@@ -24,10 +24,11 @@ class CategoryRepository(
 //        return emptyList()
 //    }
 
-    suspend operator fun invoke(forceUpdate: Boolean): List<UiCategory> {
+    suspend fun getCategories(forceUpdate: Boolean): List<UiCategory> {
         return if (forceUpdate) {
-            insertAll(getCategoriesFormApi().map { it.toDbCategory() })
-            getCategoriesFormDb().map { it.toUiCategory() }
+            val categories = getCategoriesFormApi()
+            insertAll(categories.map { it.toDbCategory() })
+            return categories.map {it.toUiCategory()}
         } else {
             getCategoriesFormDb().map { it.toUiCategory() }
         }
