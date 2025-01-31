@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.max.foodies.data.ProductsRepository
+import com.max.foodies.data.repositories.ProductsRepositoryImpl
 import com.max.foodies.data.network.Retrofit
 import com.max.foodies.data.room.roomDatabase.FoodiesDatabase
 import com.max.foodies.screens.UiProduct
@@ -17,9 +17,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel(
-    private val productsRepository: ProductsRepository
+class SearchViewModel @Inject constructor(
+    private val productsRepositoryImpl: ProductsRepositoryImpl
 ) : ViewModel() {
 
     private val _uiProducts: MutableStateFlow<List<UiProduct>> =
@@ -35,7 +36,7 @@ class SearchViewModel(
     private val searchedProducts: MutableStateFlow<List<UiProduct>> = MutableStateFlow(emptyList())
 
     private suspend fun updateProducts(forceUpdate: Boolean): List<UiProduct> {
-        return productsRepository.getProducts(forceUpdate)
+        return productsRepositoryImpl.getProducts(forceUpdate)
     }
 
     fun onSearchTextChange(text: String) {
@@ -65,32 +66,5 @@ class SearchViewModel(
                 searchedProducts.value
             }
         }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T {
-                    if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
-                        val application = checkNotNull(extras[APPLICATION_KEY])
-                        val applicationScope = CoroutineScope(SupervisorJob())
-                        val productsRepository = ProductsRepository(
-                            localDataSource = FoodiesDatabase.getInstance(
-                                application.applicationContext,
-                                applicationScope
-                            )
-                                .productDao(),
-                            networkDataSource = Retrofit.productsApi
-                        )
-                        return SearchViewModel(
-                            productsRepository = productsRepository
-                        ) as T
-                    }
-                    throw IllegalArgumentException("Unknown ViewModel")
-                }
-            }
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.max.foodies.screens.ProductsList
 import com.max.foodies.screens.searchScreen.composeItems.SearchScreenTopBar
@@ -25,9 +26,9 @@ import com.max.foodies.screens.searchScreen.composeItems.SearchScreenTopBar
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    searchScreenViewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory),
+    searchScreenViewModel: SearchViewModel = hiltViewModel(),
     onBackPressed: () -> Unit,
-    onNavigateToProduct: (id:Int?) -> Unit,
+    onNavigateToProduct: (id: Int?) -> Unit,
 ) {
     val uiProducts = searchScreenViewModel.uiProducts.collectAsState()
     val searchText = searchScreenViewModel.searchText.collectAsState()
@@ -54,7 +55,7 @@ fun SearchScreen(
                 modifier = modifier,
                 products = uiProducts.value,
                 onNavigateToProduct = onNavigateToProduct,
-                onAddProductToCart = {/*add fun: addProductIncart*/},
+                onAddProductToCart = {/*add fun: addProductIncart*/ },
             )
         } else {
             Text(

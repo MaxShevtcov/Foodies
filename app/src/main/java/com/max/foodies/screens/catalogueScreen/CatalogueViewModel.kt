@@ -5,14 +5,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.max.foodies.data.CartRepository
-import com.max.foodies.data.CategoryRepository
-import com.max.foodies.data.ProductsRepository
+import com.max.foodies.data.repositories.CartRepositoryImpl
+import com.max.foodies.data.repositories.CategoryRepositoryImpl
+import com.max.foodies.data.repositories.ProductsRepositoryImpl
 import com.max.foodies.data.mappers.toDbCartCounter
 import com.max.foodies.data.network.Retrofit
 import com.max.foodies.data.room.roomDatabase.FoodiesDatabase
 import com.max.foodies.screens.UiCategory
 import com.max.foodies.screens.UiProduct
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,11 +22,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CatalogueViewModel(
-    private val productsRepository: ProductsRepository,
-    private val categoryRepository: CategoryRepository,
-    private val cartRepository: CartRepository
+@HiltViewModel
+class CatalogueViewModel @Inject constructor(
+    private val productsRepositoryImpl: ProductsRepositoryImpl,
+    private val categoryRepositoryImpl: CategoryRepositoryImpl,
+    private val cartRepositoryImpl: CartRepositoryImpl
 ) : ViewModel() {
 
     private val _uiProducts: MutableStateFlow<List<UiProduct>> =
@@ -55,16 +58,16 @@ class CatalogueViewModel(
             }
         }
         viewModelScope.launch {
-            cartRepository.checkCartEmpty().collect { value -> _isCartEmpty.update { value } }
+            cartRepositoryImpl.checkCartEmpty().collect { value -> _isCartEmpty.update { value } }
         }
     }
 
     private suspend fun updateProducts(forceUpdate: Boolean): List<UiProduct> {
-        return productsRepository.getProducts(forceUpdate)
+        return productsRepositoryImpl.getProducts(forceUpdate)
     }
 
     private suspend fun updateCategories(forceUpdate: Boolean): List<UiCategory> {
-        return categoryRepository.getCategories(forceUpdate)
+        return categoryRepositoryImpl.getCategories(forceUpdate)
     }
 
     private fun filterProducts(category: UiCategory, selected: Boolean) {
@@ -82,7 +85,6 @@ class CatalogueViewModel(
             _uiProducts.update {
                 concatenatedFilteredProducts.value.ifEmpty { products }
             }
-
         }
     }
 
@@ -95,49 +97,7 @@ class CatalogueViewModel(
 
     fun addProductToCart(item: UiProduct) {
         viewModelScope.launch {
-            cartRepository.insertProductInCart(item.toDbCartCounter())
+            cartRepositoryImpl.insertProductInCart(item.toDbCartCounter())
         }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T {
-                    if (modelClass.isAssignableFrom(CatalogueViewModel::class.java)) {
-                        val application = checkNotNull(extras[APPLICATION_KEY])
-                        val applicationScope = CoroutineScope(SupervisorJob())
-                        val productsRepository = ProductsRepository(
-                            localDataSource = FoodiesDatabase.getInstance(
-                                application.applicationContext,
-                                applicationScope
-                            )
-                                .productDao(),
-                            networkDataSource = Retrofit.productsApi
-                        )
-                        val categoryRepository = CategoryRepository(
-                            localDataSource = FoodiesDatabase.getInstance(
-                                application.applicationContext,
-                                applicationScope
-                            ).categoryDao(),
-                            networkDataSource = Retrofit.categoriesApi
-                        )
-                        val cartRepository = CartRepository(
-                            localCartDataSource = FoodiesDatabase.getInstance(
-                                application.applicationContext,
-                                applicationScope
-                            ).cartDao()
-                        )
-                        return CatalogueViewModel(
-                            productsRepository = productsRepository,
-                            categoryRepository = categoryRepository,
-                            cartRepository = cartRepository
-                        ) as T
-                    }
-                    throw IllegalArgumentException("Unknown ViewModel")
-                }
-            }
     }
 }
