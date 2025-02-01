@@ -1,4 +1,4 @@
-package com.max.foodies.data.repositories
+package com.max.foodies.data
 
 
 import android.util.Log
@@ -9,15 +9,22 @@ import com.max.foodies.data.network.pojo.Category
 import com.max.foodies.data.room.roomDatabase.CategoryDao
 import com.max.foodies.data.room.roomDatabase.DbCategory
 import com.max.foodies.screens.UiCategory
-import javax.inject.Inject
 
 
-class CategoryRepositoryImpl@Inject constructor(
+class CategoryRepository(
     private val networkDataSource: CategoriesApi,
     private val localDataSource: CategoryDao
-):CategoryRepository {
+) {
+//    suspend fun getCategories(): List<UiCategory> {
+//        try {
+//            return networkDataSource.getCategories().map { it.toUiCategory() }
+//        } catch (e: Exception) {
+//            Log.e("!!!", "$e")
+//        }
+//        return emptyList()
+//    }
 
-    override suspend fun getCategories(forceUpdate: Boolean): List<UiCategory> {
+    suspend fun getCategories(forceUpdate: Boolean): List<UiCategory> {
         return if (forceUpdate) {
             val categories = getCategoriesFormApi()
             insertAll(categories.map { it.toDbCategory() })
@@ -27,11 +34,11 @@ class CategoryRepositoryImpl@Inject constructor(
         }
     }
 
-    override suspend fun insertAll(categories: List<DbCategory>) {
+    private suspend fun insertAll(categories: List<DbCategory>) {
         localDataSource.insertAll(categories)
     }
 
-    override suspend fun getCategoriesFormApi(): List<Category> {
+    private suspend fun getCategoriesFormApi(): List<Category> {
         try {
             return networkDataSource.getCategories()
         } catch (e: Exception) {
@@ -40,7 +47,7 @@ class CategoryRepositoryImpl@Inject constructor(
         return emptyList()
     }
 
-    override suspend fun getCategoriesFormDb(): List<DbCategory> {
+    private suspend fun getCategoriesFormDb(): List<DbCategory> {
         return localDataSource.get()
     }
 }

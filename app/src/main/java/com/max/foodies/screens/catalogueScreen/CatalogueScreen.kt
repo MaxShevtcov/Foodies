@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.max.foodies.screens.ProductsList
 import com.max.foodies.screens.catalogueScreen.composeItems.CatalogueTopBar
@@ -27,7 +26,7 @@ import com.max.foodies.utils.priceConverterUtil
 
 @Composable
 fun CatalogueScreen(
-    catalogueViewModel: CatalogueViewModel = hiltViewModel(),
+    catalogueViewModel: CatalogueViewModel = viewModel(factory = CatalogueViewModel.Factory),
     onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
     onNavigateToProduct: (id: Int?) -> Unit,

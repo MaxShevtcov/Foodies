@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -38,7 +37,10 @@ fun ProductScreen(
     modifier: Modifier = Modifier,
     id: Int,
     onBackPressed: () -> Unit,
-    productViewModel: ProductViewModel = hiltViewModel()
+    productViewModel: ProductViewModel = viewModel(
+        factory =
+        ProductViewModel.Factory
+    )
 ) {
 
     val scrollState = rememberScrollState()

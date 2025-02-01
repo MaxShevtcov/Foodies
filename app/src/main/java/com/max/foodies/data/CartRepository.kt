@@ -1,30 +1,35 @@
-package com.max.foodies.data.repositories
+package com.max.foodies.data
 
+import android.util.Log
+import com.max.foodies.data.mappers.toDbCartCounter
 import com.max.foodies.data.mappers.toUiProductInCart
 import com.max.foodies.data.room.roomDatabase.CartDao
 import com.max.foodies.data.room.roomDatabase.DbCartCounter
 import com.max.foodies.screens.UiCartProduct
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
+import kotlinx.coroutines.flow.stateIn
 
-class CartRepositoryImpl@Inject constructor(
+class CartRepository(
     private val localCartDataSource: CartDao
-):CartRepository {
+) {
 
 
-    override suspend fun insertProductInCart(dbCartCounter: DbCartCounter) {
+    suspend fun insertProductInCart(dbCartCounter: DbCartCounter) {
         val dbCartCounter = dbCartCounter
         localCartDataSource.insert(dbCartCounter)
     }
 
-    override suspend fun getProductAndCountInCart(): List<UiCartProduct> {
+    suspend fun getProductAndCountInCart(): List<UiCartProduct> {
         return localCartDataSource.getProductAndCountInCart().map { it.toUiProductInCart() }
     }
 
 
 
-    override fun checkCartEmpty():Flow<Boolean> {
+    fun checkCartEmpty():Flow<Boolean> {
         return localCartDataSource.getCartCounter().map { cart ->
             cart.isNullOrEmpty()
         }

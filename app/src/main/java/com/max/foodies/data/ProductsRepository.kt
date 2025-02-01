@@ -1,4 +1,4 @@
-package com.max.foodies.data.repositories
+package com.max.foodies.data
 
 import android.util.Log
 import com.max.foodies.data.mappers.toDbProduct
@@ -8,14 +8,13 @@ import com.max.foodies.data.network.pojo.Product
 import com.max.foodies.data.room.roomDatabase.ProductDao
 import com.max.foodies.data.room.roomDatabase.DbProduct
 import com.max.foodies.screens.UiProduct
-import javax.inject.Inject
 
 
-class ProductsRepositoryImpl@Inject constructor(
+class ProductsRepository(
     private val networkDataSource: ProductsApi,
     private val localDataSource: ProductDao
-) : ProductsRepository {
-    override suspend fun getProducts(forceUpdate: Boolean): List<UiProduct> {
+) {
+    suspend fun getProducts(forceUpdate: Boolean): List<UiProduct> {
         return if (forceUpdate) {
             val products = getProductsFormApi()
             insertAll(products.map { it.toDbProduct() })
@@ -25,11 +24,11 @@ class ProductsRepositoryImpl@Inject constructor(
         }
     }
 
-    override suspend fun insertAll(products: List<DbProduct>) {
+    private suspend fun insertAll(products: List<DbProduct>) {
         localDataSource.insertAll(products)
     }
 
-    override suspend fun getProductsFormApi(): List<Product> {
+    private suspend fun getProductsFormApi(): List<Product> {
         try {
             return networkDataSource.getProducts()
         } catch (e: Exception) {
@@ -38,11 +37,11 @@ class ProductsRepositoryImpl@Inject constructor(
         return emptyList()
     }
 
-    override suspend fun getProductsFormDb(): List<DbProduct> {
+    private suspend fun getProductsFormDb(): List<DbProduct> {
         return localDataSource.get()
     }
 
-    override suspend fun getProductById(id: Int): UiProduct {
+    suspend fun getProductById(id:Int): UiProduct {
         return localDataSource.getById(id).toUiProduct()
     }
 }
