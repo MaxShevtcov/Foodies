@@ -11,6 +11,7 @@ import com.max.foodies.data.ProductsRepository
 import com.max.foodies.data.network.Retrofit
 import com.max.foodies.data.room.roomDatabase.FoodiesDatabase
 import com.max.foodies.screens.UiProduct
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -24,9 +25,10 @@ import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
-
-class ProductViewModel(
+@HiltViewModel
+class ProductViewModel @Inject constructor(
     private val productsRepository: ProductsRepository,
 ) : ViewModel() {
 
@@ -38,32 +40,4 @@ class ProductViewModel(
         started = WhileSubscribed(),
         initialValue = UiProduct()
     )
-
-    companion object {
-        val Factory: ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T {
-                    if (modelClass.isAssignableFrom(ProductViewModel::class.java)) {
-                        val application = checkNotNull(extras[APPLICATION_KEY])
-                        val applicationScope = CoroutineScope(SupervisorJob())
-                        val productsRepository = ProductsRepository(
-                            localDataSource = FoodiesDatabase.getInstance(
-                                application.applicationContext,
-                                applicationScope
-                            )
-                                .productDao(),
-                            networkDataSource = Retrofit.productsApi
-                        )
-
-                        return ProductViewModel(
-                            productsRepository = productsRepository
-                        ) as T
-                    }
-                    throw IllegalArgumentException("Unknown ViewModel")
-                }
-            }
-    }
 }

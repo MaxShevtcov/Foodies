@@ -9,6 +9,7 @@ import com.max.foodies.data.ProductsRepository
 import com.max.foodies.data.network.Retrofit
 import com.max.foodies.data.room.roomDatabase.FoodiesDatabase
 import com.max.foodies.screens.UiProduct
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,8 +18,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel(
+@HiltViewModel
+class SearchViewModel @Inject constructor(
     private val productsRepository: ProductsRepository
 ) : ViewModel() {
 
@@ -65,32 +68,5 @@ class SearchViewModel(
                 searchedProducts.value
             }
         }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T {
-                    if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
-                        val application = checkNotNull(extras[APPLICATION_KEY])
-                        val applicationScope = CoroutineScope(SupervisorJob())
-                        val productsRepository = ProductsRepository(
-                            localDataSource = FoodiesDatabase.getInstance(
-                                application.applicationContext,
-                                applicationScope
-                            )
-                                .productDao(),
-                            networkDataSource = Retrofit.productsApi
-                        )
-                        return SearchViewModel(
-                            productsRepository = productsRepository
-                        ) as T
-                    }
-                    throw IllegalArgumentException("Unknown ViewModel")
-                }
-            }
     }
 }
