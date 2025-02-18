@@ -8,9 +8,10 @@ import com.max.foodies.data.network.pojo.Product
 import com.max.foodies.data.room.roomDatabase.ProductDao
 import com.max.foodies.data.room.roomDatabase.DbProduct
 import com.max.foodies.screens.UiProduct
+import javax.inject.Inject
 
 
-class ProductsRepository(
+class ProductsRepository @Inject constructor(
     private val networkDataSource: ProductsApi,
     private val localDataSource: ProductDao
 ) {

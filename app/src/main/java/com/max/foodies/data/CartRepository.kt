@@ -12,8 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class CartRepository(
+class CartRepository @Inject constructor(
     private val localCartDataSource: CartDao
 ) {
 
@@ -28,10 +29,9 @@ class CartRepository(
     }
 
 
-
-    fun checkCartEmpty():Flow<Boolean> {
+    fun checkCartEmpty(): Flow<Boolean> {
         return localCartDataSource.getCartCounter().map { cart ->
-            cart.isNullOrEmpty()
+            cart.isEmpty()
         }
     }
 }

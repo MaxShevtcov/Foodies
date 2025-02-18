@@ -9,9 +9,10 @@ import com.max.foodies.data.network.pojo.Category
 import com.max.foodies.data.room.roomDatabase.CategoryDao
 import com.max.foodies.data.room.roomDatabase.DbCategory
 import com.max.foodies.screens.UiCategory
+import javax.inject.Inject
 
 
-class CategoryRepository(
+class CategoryRepository @Inject constructor(
     private val networkDataSource: CategoriesApi,
     private val localDataSource: CategoryDao
 ) {
@@ -28,7 +29,7 @@ class CategoryRepository(
         return if (forceUpdate) {
             val categories = getCategoriesFormApi()
             insertAll(categories.map { it.toDbCategory() })
-            return categories.map {it.toUiCategory()}
+            return categories.map { it.toUiCategory() }
         } else {
             getCategoriesFormDb().map { it.toUiCategory() }
         }
