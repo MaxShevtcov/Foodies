@@ -1,6 +1,7 @@
 package com.max.foodies.data.room.roomDatabase
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -10,14 +11,13 @@ import retrofit2.http.GET
 @Dao
 interface CartDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(dbCartCounter: DbCartCounter)
+    suspend fun insert(dbProduct: DbProduct)
 
-    @Query("SELECT * FROM dbproduct" + " JOIN dbCartCounter ON dbProduct.id = dbCartCounter.productId")
-    suspend fun getProductAndCountInCart(): List<ProductWithCountInCart>
+    @Delete
+    suspend fun delete(dbProduct: DbProduct)
 
-    @Query("SELECT * FROM dbCartCounter")
-     fun getCartCounter(): Flow<List<DbCartCounter>>
-
-    @Query("DELETE FROM dbCartCounter")
-    suspend fun deleteAll()
+    @Query("SELECT * FROM dbproduct WHERE count_in_cart != null")
+    suspend fun getProductInCart(): List<DbProduct>
+    @Query("SELECT * FROM dbproduct WHERE count_in_cart != null")
+     fun checkCartIsNotEmpty(): Flow<List<DbProduct>>
 }

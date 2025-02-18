@@ -75,7 +75,6 @@ private class FoodiesDatabaseCallback(
     suspend fun populateDatabase() {
         productProvider.get().deleteAll()
         categoryProvider.get().deleteAll()
-        cartProvider.get().deleteAll()
     }
 }
 
