@@ -2,7 +2,7 @@ package com.max.foodies.screens.productScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.max.foodies.data.ProductsRepository
+import com.max.foodies.data.repositories.ProductsRepository
 import com.max.foodies.screens.UiProduct
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed

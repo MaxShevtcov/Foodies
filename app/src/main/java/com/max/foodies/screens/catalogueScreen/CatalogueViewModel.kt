@@ -1,11 +1,11 @@
 package com.max.foodies.screens.catalogueScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.max.foodies.data.CartRepository
-import com.max.foodies.data.CategoryRepository
-import com.max.foodies.data.ProductsRepository
-import com.max.foodies.data.mappers.toDbCartCounter
+import com.max.foodies.data.repositories.CategoryRepository
+import com.max.foodies.data.repositories.ProductsRepository
+import com.max.foodies.data.use_cases.CartUseCase
 import com.max.foodies.screens.UiCategory
 import com.max.foodies.screens.UiProduct
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class CatalogueViewModel @Inject constructor(
     private val productsRepository: ProductsRepository,
     private val categoryRepository: CategoryRepository,
-    private val cartRepository: CartRepository
+    private val cartUseCase: CartUseCase
 ) : ViewModel() {
 
     private val _uiProducts: MutableStateFlow<List<UiProduct>> =
@@ -31,8 +31,13 @@ class CatalogueViewModel @Inject constructor(
     private val _uiCategories: MutableStateFlow<List<UiCategory>> =
         MutableStateFlow(emptyList())
     val uiCategories: StateFlow<List<UiCategory>> = _uiCategories.asStateFlow()
+
     private val _isCartEmpty: MutableStateFlow<Boolean> = MutableStateFlow(true)
     val isCartEmpty: StateFlow<Boolean> = _isCartEmpty.asStateFlow()
+
+    private val _cartBill: MutableStateFlow<Int> = MutableStateFlow(0)
+    val cartBill: StateFlow<Int> = _cartBill.asStateFlow()
+
 
     private val concatenatedFilteredProducts: MutableStateFlow<List<UiProduct>> =
         MutableStateFlow(emptyList())
@@ -50,9 +55,7 @@ class CatalogueViewModel @Inject constructor(
                 uiProducts
             }
         }
-        viewModelScope.launch {
-            cartRepository.checkCartEmpty().collect { value -> _isCartEmpty.update { value } }
-        }
+
     }
 
     private suspend fun updateProducts(forceUpdate: Boolean): List<UiProduct> {
@@ -78,8 +81,29 @@ class CatalogueViewModel @Inject constructor(
             _uiProducts.update {
                 concatenatedFilteredProducts.value.ifEmpty { products }
             }
-
         }
+    }
+
+    private suspend fun updateCartBill() {
+        val cartBillSum = cartUseCase.countBillSum()
+        viewModelScope.launch(Dispatchers.IO) {
+            _cartBill.update {
+                cartBillSum
+            }
+        }
+    }
+
+    private fun checkCartEmpty() {
+        viewModelScope.launch {
+            val isCartEmpty =
+                cartUseCase.getProductsInCart().map { it.countInCart != null && it.countInCart != 0 }
+                    .isNotEmpty()
+            _isCartEmpty.update {
+                isCartEmpty
+            }
+            Log.e("!!!", "_isCartEmpty in catalogueVM ${_isCartEmpty.value}")
+        }
+
     }
 
     fun selectCategory(item: UiCategory, selected: Boolean) {
@@ -91,7 +115,15 @@ class CatalogueViewModel @Inject constructor(
 
     fun addProductToCart(item: UiProduct) {
         viewModelScope.launch {
-            cartRepository.insertProductInCart(item.toDbCartCounter())
+            cartUseCase.addProductInCart(item)
+            updateCartBill()
+        }
+    }
+
+    fun takeProductFromCart(item: UiProduct) {
+        viewModelScope.launch {
+            cartUseCase.takeProductFromCart(item)
+            updateCartBill()
         }
     }
 }

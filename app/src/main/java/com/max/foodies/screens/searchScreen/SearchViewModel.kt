@@ -2,7 +2,8 @@ package com.max.foodies.screens.searchScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.max.foodies.data.ProductsRepository
+import com.max.foodies.data.repositories.ProductsRepository
+import com.max.foodies.data.use_cases.CartUseCase
 import com.max.foodies.screens.UiProduct
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val productsRepository: ProductsRepository
+    private val productsRepository: ProductsRepository,
+    private val cartUseCase: CartUseCase
 ) : ViewModel() {
 
     private val _uiProducts: MutableStateFlow<List<UiProduct>> =
@@ -34,20 +36,6 @@ class SearchViewModel @Inject constructor(
         return productsRepository.getProducts(forceUpdate)
     }
 
-    fun onSearchTextChange(text: String) {
-        filterSearchedProducts()
-        _searchText.update {
-            text
-        }
-    }
-
-    fun onToogleSearch() {
-        val isSearching = _isSearching.value
-        _isSearching.update {
-            !isSearching
-        }
-    }
-
     private fun filterSearchedProducts() {
         viewModelScope.launch(Dispatchers.Default) {
             val products = updateProducts(false)
@@ -62,4 +50,32 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
+    fun onSearchTextChange(text: String) {
+        filterSearchedProducts()
+        _searchText.update {
+            text
+        }
+    }
+
+    fun onToogleSearch() {
+        val isSearching = _isSearching.value
+        _isSearching.update {
+            !isSearching
+        }
+    }
+
+    fun addProductToCart(item: UiProduct) {
+        viewModelScope.launch {
+            cartUseCase.addProductInCart(item)
+        }
+    }
+
+    fun takeProductFromCart(item: UiProduct) {
+        viewModelScope.launch {
+            cartUseCase.takeProductFromCart(item)
+        }
+    }
+
+
 }
