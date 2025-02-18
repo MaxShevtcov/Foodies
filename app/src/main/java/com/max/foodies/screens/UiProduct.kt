@@ -16,4 +16,5 @@ data class UiProduct(
     val fatsPer100Grams : Double? = null ,
     val carbohydratesPer100Grams : Double? = null ,
     var tagIds: List<String>? = emptyList(),
+    val countInCart:Int? = null
 )

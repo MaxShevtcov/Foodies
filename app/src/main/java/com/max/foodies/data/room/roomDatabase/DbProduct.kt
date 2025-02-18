@@ -37,4 +37,6 @@ data class DbProduct(
     val carbohydratesPer100Grams: Double? = null,
     @ColumnInfo("tag_ids")
     var tagIds: List<String>? = emptyList(),
+    @ColumnInfo("count_in_cart")
+    var countInCart: Int? = null,
 )
