@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.max.foodies.screens.UiProduct
 import com.max.foodies.screens.cartScreen.composeItems.CartProductsList
 
 @Composable
@@ -16,6 +16,7 @@ fun CartScreen(
     onBackPressed: () -> Unit,
     viewModel: CartViewModel = hiltViewModel(),
     onNavigateToProduct: (id: Int?) -> Unit,
+
 ) {
     val uiCartProducts = viewModel.uiCartProducts.collectAsState()
 
@@ -37,7 +38,9 @@ fun CartScreen(
         CartProductsList(
             modifier = modifier,
             products = uiCartProducts.value,
-            onNavigateToProduct = onNavigateToProduct
+            onNavigateToProduct = onNavigateToProduct,
+            onAddProductToCart = { uiProduct -> viewModel.addProductToCart(uiProduct) },
+            onTakeProductFromCart = { uiProduct -> viewModel.takeProductFromCart(uiProduct) }
         )
     }
 }

@@ -13,8 +13,9 @@ fun ProductsList(
     modifier: Modifier,
     products: List<UiProduct>,
     onNavigateToProduct: (id: Int?) -> Unit,
-    onAddProductToCart: (uiProduct:UiProduct) -> Unit
-) {
+    onAddProductToCart: (uiProduct:UiProduct) -> Unit,
+    onTakeProductFromCart: (uiProduct: UiProduct) -> Unit,
+    ) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(2)
@@ -28,6 +29,7 @@ fun ProductsList(
                 product = product,
                 onNavigateToProduct = onNavigateToProduct,
                 onAddProductToCart = onAddProductToCart,
+                onTakeProductFromCart = onTakeProductFromCart,
             )
 
         }

@@ -3,23 +3,19 @@ package com.max.foodies.screens.catalogueScreen
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.max.foodies.screens.ProductsList
 import com.max.foodies.screens.catalogueScreen.composeItems.CatalogueTopBar
 import com.max.foodies.screens.catalogueScreen.composeItems.CategoriesList
@@ -36,6 +32,7 @@ fun CatalogueScreen(
     val uiProduct = catalogueViewModel.uiProducts.collectAsState()
     val uiCategories = catalogueViewModel.uiCategories.collectAsState()
     val isCartEmpty = catalogueViewModel.isCartEmpty.collectAsState()
+    val cartBillSum = catalogueViewModel.cartBill.collectAsState()
 
     Column(modifier = modifier.fillMaxSize()) {
         Column(modifier = modifier.weight(1f)) {
@@ -58,7 +55,10 @@ fun CatalogueScreen(
                 modifier = modifier,
                 products = uiProduct.value,
                 onNavigateToProduct = onNavigateToProduct,
-                onAddProductToCart = { uiProduct -> catalogueViewModel.addProductToCart(uiProduct) }
+                onAddProductToCart = { uiProduct ->
+                    catalogueViewModel.addProductToCart(uiProduct) },
+                onTakeProductFromCart = { uiProduct ->
+                    catalogueViewModel.takeProductFromCart(uiProduct) }
             )
         }
         if (!isCartEmpty.value) {
@@ -70,7 +70,7 @@ fun CatalogueScreen(
                 shape = RoundedCornerShape(15),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
             ) {
-                Text(text = "Здесь будет стоимость корзины")
+                Text(text = "${priceConverterUtil(cartBillSum.value)} Р")
             }
         }
     }

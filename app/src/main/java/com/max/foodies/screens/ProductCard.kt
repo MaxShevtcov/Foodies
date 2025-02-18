@@ -1,6 +1,7 @@
 package com.max.foodies.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,7 +25,8 @@ fun ProductCard(
     modifier: Modifier,
     product: UiProduct,
     onNavigateToProduct: (id: Int?) -> Unit,
-    onAddProductToCart: (uiProduct: UiProduct) -> Unit
+    onAddProductToCart: (uiProduct: UiProduct) -> Unit,
+    onTakeProductFromCart: (uiProduct: UiProduct) -> Unit,
 ) {
     Card(
         modifier
@@ -40,19 +42,24 @@ fun ProductCard(
             )
             Text("${product.name}", modifier.weight(1f))
             Text("${product.measure} ${product.measureUnit}")
-            ElevatedButton(
-                onClick = {
-                    onAddProductToCart(product)
-                },
-                modifier = modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(15),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
-            ) {
-                Text(text = "${priceConverterUtil(product?.priceCurrent)} P")
+            if (product.countInCart == null || product.countInCart == 0) {
+                ElevatedButton(
+                    onClick = {
+                        onAddProductToCart(product)
+                    },
+                    modifier = modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(15),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp),
+                ) {
+                    Text(text = "${priceConverterUtil(product.priceCurrent)} P")
+                }
+            } else {
+                PlusMinusCartCounter(modifier, product, onAddProductToCart, onTakeProductFromCart)
             }
         }
     }
 }
+
 
 @Preview(showBackground = true, widthDp = 160)
 @Composable
@@ -61,6 +68,7 @@ fun ProductCardPreview() {
         modifier = Modifier,
         product = UiProduct(),
         onNavigateToProduct = {},
-        onAddProductToCart = {}
+        onAddProductToCart = {},
+        onTakeProductFromCart = {}
     )
 }
