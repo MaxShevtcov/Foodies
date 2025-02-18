@@ -1,4 +1,4 @@
-package com.max.foodies.data
+package com.max.foodies.data.repositories
 
 
 import android.util.Log
