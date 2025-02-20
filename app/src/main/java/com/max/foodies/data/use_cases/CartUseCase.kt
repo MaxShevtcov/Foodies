@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asFlow
 import javax.inject.Inject
 
 class CartUseCase @Inject constructor(
+
     private val cartRepository: CartRepository
 ) {
 
@@ -16,8 +17,6 @@ class CartUseCase @Inject constructor(
         return cartRepository.getProductInCart().map { it.toUiProduct() }
     }
 
-//    suspend fun checkCartEmpty(): Flow<Boolean> =
-//        cartRepository.getProductInCart().map { it.countInCart != null }.isEmpty().asFlow()
 
     suspend fun countBillSum(): Int {
         val productsInCartList = getProductsInCart()
@@ -31,7 +30,7 @@ class CartUseCase @Inject constructor(
     }
 
     suspend fun addProductInCart(item: UiProduct) {
-        val prevCounter = item.countInCart ?: 0
+        val prevCounter = item.countInCart ?:0
         var currentCounter = prevCounter
         currentCounter += 1
         val dbProduct = item.toDbProduct(currentCounter)
@@ -39,14 +38,16 @@ class CartUseCase @Inject constructor(
     }
 
     suspend fun takeProductFromCart(item: UiProduct) {
-        val prevCounter = item.countInCart ?: 0
+        val prevCounter = item.countInCart?:0
         var currentCounter = prevCounter
         if (prevCounter > 0) {
             currentCounter -= 1
             val dbProduct = item.toDbProduct(currentCounter)
             cartRepository.insertProductInCart(dbProduct)
         } else {
-            cartRepository.delete(item.toDbProduct(prevCounter))
+            currentCounter = 0
+            val dbProduct = item.toDbProduct(currentCounter)
+            cartRepository.insertProductInCart(dbProduct)
         }
 
     }

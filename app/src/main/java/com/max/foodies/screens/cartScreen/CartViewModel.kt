@@ -38,12 +38,22 @@ class CartViewModel @Inject constructor(
     fun addProductToCart(item: UiProduct) {
         viewModelScope.launch {
             cartUseCase.addProductInCart(item)
+
+            val cartProducts = updateCartProducts()
+            _uiCartProducts.update {
+                cartProducts
+            }
         }
     }
 
     fun takeProductFromCart(item: UiProduct) {
         viewModelScope.launch {
             cartUseCase.takeProductFromCart(item)
+
+            val cartProducts = updateCartProducts()
+            _uiCartProducts.update {
+                cartProducts
+            }
         }
     }
 }

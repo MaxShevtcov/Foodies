@@ -86,18 +86,17 @@ class CatalogueViewModel @Inject constructor(
 
     private suspend fun updateCartBill() {
         val cartBillSum = cartUseCase.countBillSum()
-        viewModelScope.launch(Dispatchers.IO) {
-            _cartBill.update {
-                cartBillSum
-            }
+        _cartBill.update {
+            cartBillSum
         }
     }
 
     private fun checkCartEmpty() {
         viewModelScope.launch {
             val isCartEmpty =
-                cartUseCase.getProductsInCart().map { it.countInCart != null && it.countInCart != 0 }
-                    .isNotEmpty()
+                cartUseCase.getProductsInCart()
+                    .map { it.countInCart != 0 }
+                    .isEmpty()
             _isCartEmpty.update {
                 isCartEmpty
             }
@@ -116,14 +115,24 @@ class CatalogueViewModel @Inject constructor(
     fun addProductToCart(item: UiProduct) {
         viewModelScope.launch {
             cartUseCase.addProductInCart(item)
-            updateCartBill()
+            val uiProducts = updateProducts(false)
+            _uiProducts.update {
+                uiProducts
+            }
+            launch { updateCartBill() }
+            launch { checkCartEmpty() }
         }
     }
 
     fun takeProductFromCart(item: UiProduct) {
         viewModelScope.launch {
             cartUseCase.takeProductFromCart(item)
-            updateCartBill()
+            val uiProducts = updateProducts(false)
+            _uiProducts.update {
+                uiProducts
+            }
+            launch { updateCartBill() }
+            launch { checkCartEmpty() }
         }
     }
 }

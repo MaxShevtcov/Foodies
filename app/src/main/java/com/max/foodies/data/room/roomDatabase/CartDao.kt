@@ -16,8 +16,7 @@ interface CartDao {
     @Delete
     suspend fun delete(dbProduct: DbProduct)
 
-    @Query("SELECT * FROM dbproduct WHERE count_in_cart != null")
+    @Query("SELECT * FROM dbproduct WHERE count_in_cart != 0")
     suspend fun getProductInCart(): List<DbProduct>
-    @Query("SELECT * FROM dbproduct WHERE count_in_cart != null")
-     fun checkCartIsNotEmpty(): Flow<List<DbProduct>>
+
 }

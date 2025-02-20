@@ -42,7 +42,7 @@ fun ProductCard(
             )
             Text("${product.name}", modifier.weight(1f))
             Text("${product.measure} ${product.measureUnit}")
-            if (product.countInCart == null || product.countInCart == 0) {
+            if (product.countInCart == 0) {
                 ElevatedButton(
                     onClick = {
                         onAddProductToCart(product)

@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [DbProduct::class, DbCategory::class, DbCartCounter::class],
+    entities = [DbProduct::class, DbCategory::class],
     version = 1,
     exportSchema = false
 )
