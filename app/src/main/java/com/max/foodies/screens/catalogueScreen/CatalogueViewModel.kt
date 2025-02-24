@@ -6,13 +6,23 @@ import androidx.lifecycle.viewModelScope
 import com.max.foodies.data.repositories.CategoryRepository
 import com.max.foodies.data.repositories.ProductsRepository
 import com.max.foodies.data.use_cases.CartUseCase
+import com.max.foodies.data.use_cases.CatalogueUseCase
 import com.max.foodies.screens.UiCategory
 import com.max.foodies.screens.UiProduct
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,12 +31,13 @@ import javax.inject.Inject
 class CatalogueViewModel @Inject constructor(
     private val productsRepository: ProductsRepository,
     private val categoryRepository: CategoryRepository,
-    private val cartUseCase: CartUseCase
+    private val cartUseCase: CartUseCase,
+    private val catalogueUseCase: CatalogueUseCase
 ) : ViewModel() {
 
     private val _uiProducts: MutableStateFlow<List<UiProduct>> =
         MutableStateFlow(emptyList())
-    val uiProducts: StateFlow<List<UiProduct>> = _uiProducts.asStateFlow()
+    //val uiProducts: StateFlow<List<UiProduct>> = _uiProducts.asStateFlow()
 
     private val _uiCategories: MutableStateFlow<List<UiCategory>> =
         MutableStateFlow(emptyList())
@@ -39,49 +50,36 @@ class CatalogueViewModel @Inject constructor(
     val cartBill: StateFlow<Int> = _cartBill.asStateFlow()
 
 
-    private val concatenatedFilteredProducts: MutableStateFlow<List<UiProduct>> =
-        MutableStateFlow(emptyList())
+    private val _selectedCategory: MutableStateFlow<UiCategory> = MutableStateFlow(UiCategory())
+
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val uiProducts: StateFlow<List<UiProduct>> = _selectedCategory.flatMapLatest {category ->
+
+        if (category.id == null) {
+            catalogueUseCase.getProducts(true)
+        } else {
+            catalogueUseCase.getProductsByCategory(category.id)
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val uiCategories = updateCategories(true)
             _uiCategories.update {
                 uiCategories
             }
         }
-        viewModelScope.launch(Dispatchers.IO) {
-            val uiProducts = updateProducts(true)
-            _uiProducts.update {
-                uiProducts
-            }
-        }
 
     }
 
-    private suspend fun updateProducts(forceUpdate: Boolean): List<UiProduct> {
-        return productsRepository.getProducts(forceUpdate)
-    }
 
     private suspend fun updateCategories(forceUpdate: Boolean): List<UiCategory> {
         return categoryRepository.getCategories(forceUpdate)
-    }
-
-    private fun filterProducts(category: UiCategory, selected: Boolean) {
-        viewModelScope.launch(Dispatchers.Default) {
-            val products = updateProducts(forceUpdate = false)
-            val filteredProducts = products.filter { product -> product.categoryId == category.id }
-
-            if (selected) {
-                concatenatedFilteredProducts.value =
-                    concatenatedFilteredProducts.value.plus(filteredProducts)
-            } else {
-                concatenatedFilteredProducts.value =
-                    concatenatedFilteredProducts.value.minus(filteredProducts.toSet())
-            }
-            _uiProducts.update {
-                concatenatedFilteredProducts.value.ifEmpty { products }
-            }
-        }
     }
 
     private suspend fun updateCartBill() {
@@ -105,20 +103,42 @@ class CatalogueViewModel @Inject constructor(
 
     }
 
-    fun selectCategory(item: UiCategory, selected: Boolean) {
-        _uiCategories.value.find { it.id == item.id }?.let { category ->
-            category.selected = selected
-            filterProducts(category, selected)
+    fun onCategorySelected(selectedItem: UiCategory) {
+        selectedItem.selected = !selectedItem.selected
+        val iterator = _uiCategories.value.listIterator()
+
+        while (iterator.hasNext()) {
+            val listItem = iterator.next()
+
+            iterator.apply {
+                if (listItem.id == selectedItem.id) {
+                    listItem.selected = selectedItem.selected
+                } else {
+                    listItem.selected = false
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            _selectedCategory.emit(
+                if (selectedItem.selected) {
+                    selectedItem
+                } else {
+                    UiCategory()
+                }
+            )
+
+            Log.e("!!!", "category in selectCategory fun:${_selectedCategory.value.selected}")
         }
     }
 
     fun addProductToCart(item: UiProduct) {
         viewModelScope.launch {
             cartUseCase.addProductInCart(item)
-            val uiProducts = updateProducts(false)
-            _uiProducts.update {
-                uiProducts
-            }
+//            val uiProducts = updateProducts(false)
+//            _uiProducts.update {
+//                uiProducts
+//            }
             launch { updateCartBill() }
             launch { checkCartEmpty() }
         }
@@ -127,10 +147,10 @@ class CatalogueViewModel @Inject constructor(
     fun takeProductFromCart(item: UiProduct) {
         viewModelScope.launch {
             cartUseCase.takeProductFromCart(item)
-            val uiProducts = updateProducts(false)
-            _uiProducts.update {
-                uiProducts
-            }
+//            val uiProducts = updateProducts(false)
+//            _uiProducts.update {
+//                uiProducts
+//            }
             launch { updateCartBill() }
             launch { checkCartEmpty() }
         }

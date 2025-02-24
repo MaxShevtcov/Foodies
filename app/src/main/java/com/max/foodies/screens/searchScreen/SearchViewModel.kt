@@ -2,8 +2,8 @@ package com.max.foodies.screens.searchScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.max.foodies.data.repositories.ProductsRepository
 import com.max.foodies.data.use_cases.CartUseCase
+import com.max.foodies.data.use_cases.SearchUseCase
 import com.max.foodies.screens.UiProduct
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,8 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val productsRepository: ProductsRepository,
-    private val cartUseCase: CartUseCase
+    private val cartUseCase: CartUseCase,
+    private val searchUseCase: SearchUseCase
 ) : ViewModel() {
 
     private val _uiProducts: MutableStateFlow<List<UiProduct>> =
@@ -30,31 +30,22 @@ class SearchViewModel @Inject constructor(
     private val _isSearching: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
 
-    private val searchedProducts: MutableStateFlow<List<UiProduct>> = MutableStateFlow(emptyList())
 
-    private suspend fun updateProducts(forceUpdate: Boolean): List<UiProduct> {
-        return productsRepository.getProducts(forceUpdate)
-    }
-
-    private fun filterSearchedProducts() {
+    private fun filterSearchedProducts(prefix: CharSequence) {
         viewModelScope.launch(Dispatchers.Default) {
-            val products = updateProducts(false)
-            searchedProducts.value = products.filter { product ->
-                product.name?.uppercase()?.contains(
-                    _searchText.value.trim().uppercase()
-                )
-                    ?: false
+            searchUseCase.searchProducts(prefix).collect{searchedProducts ->
+                _uiProducts.update {
+                    searchedProducts
+                }
             }
-            _uiProducts.update {
-                searchedProducts.value
-            }
+
         }
     }
 
-    fun onSearchTextChange(text: String) {
-        filterSearchedProducts()
+    fun onSearchTextChange(prefix: String) {
+        filterSearchedProducts(prefix)
         _searchText.update {
-            text
+            prefix
         }
     }
 

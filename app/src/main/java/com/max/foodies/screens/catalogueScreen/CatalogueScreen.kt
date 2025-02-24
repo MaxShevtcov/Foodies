@@ -1,17 +1,19 @@
 package com.max.foodies.screens.catalogueScreen
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,6 +22,7 @@ import com.max.foodies.screens.ProductsList
 import com.max.foodies.screens.catalogueScreen.composeItems.CatalogueTopBar
 import com.max.foodies.screens.catalogueScreen.composeItems.CategoriesList
 import com.max.foodies.utils.priceConverterUtil
+import kotlinx.coroutines.launch
 
 @Composable
 fun CatalogueScreen(
@@ -34,6 +37,7 @@ fun CatalogueScreen(
     val isCartEmpty = catalogueViewModel.isCartEmpty.collectAsState()
     val cartBillSum = catalogueViewModel.cartBill.collectAsState()
 
+
     Column(modifier = modifier.fillMaxSize()) {
         Column(modifier = modifier.weight(1f)) {
             CatalogueTopBar(
@@ -41,14 +45,16 @@ fun CatalogueScreen(
                 modifier = modifier.height(72.dp)
             )
 
+
             CategoriesList(
+
                 modifier = modifier,
                 categories = uiCategories.value,
-                onSelected = { category, selected ->
-                    catalogueViewModel.selectCategory(
-                        category,
-                        selected
+                onSelected = { category ->
+                    catalogueViewModel.onCategorySelected(
+                        category
                     )
+
                 }
             )
             ProductsList(
@@ -56,9 +62,11 @@ fun CatalogueScreen(
                 products = uiProduct.value,
                 onNavigateToProduct = onNavigateToProduct,
                 onAddProductToCart = { uiProduct ->
-                    catalogueViewModel.addProductToCart(uiProduct) },
+                    catalogueViewModel.addProductToCart(uiProduct)
+                },
                 onTakeProductFromCart = { uiProduct ->
-                    catalogueViewModel.takeProductFromCart(uiProduct) }
+                    catalogueViewModel.takeProductFromCart(uiProduct)
+                }
             )
         }
         if (!isCartEmpty.value) {

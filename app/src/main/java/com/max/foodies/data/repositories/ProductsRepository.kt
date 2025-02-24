@@ -8,6 +8,10 @@ import com.max.foodies.data.network.pojo.Product
 import com.max.foodies.data.room.roomDatabase.ProductDao
 import com.max.foodies.data.room.roomDatabase.DbProduct
 import com.max.foodies.screens.UiProduct
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -15,15 +19,17 @@ class ProductsRepository @Inject constructor(
     private val networkDataSource: ProductsApi,
     private val localDataSource: ProductDao
 ) {
-    suspend fun getProducts(forceUpdate: Boolean): List<UiProduct> {
-        return if (forceUpdate) {
+    fun getProducts(forceUpdate: Boolean): Flow<List<UiProduct>> = flow {
+        if (forceUpdate) {
             val products = getProductsFormApi()
             insertAll(products.map { it.toDbProduct() })
-            products.map { it.toUiProduct() }
+            emit(products.map { it.toUiProduct() })
+
         } else {
-            getProductsFormDb().map { it.toUiProduct() }
+            emit(getProductsFormDb().map { it.toUiProduct() })
         }
     }
+
 
     private suspend fun insertAll(products: List<DbProduct>) {
         localDataSource.insertAll(products)
@@ -42,7 +48,7 @@ class ProductsRepository @Inject constructor(
         return localDataSource.get()
     }
 
-    suspend fun getProductById(id:Int): UiProduct {
+    suspend fun getProductById(id: Int): UiProduct {
         return localDataSource.getById(id).toUiProduct()
     }
 }
