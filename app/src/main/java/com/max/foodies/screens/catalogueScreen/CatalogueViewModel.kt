@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.last
@@ -54,7 +55,7 @@ class CatalogueViewModel @Inject constructor(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val uiProducts: StateFlow<List<UiProduct>> = _selectedCategory.flatMapLatest {category ->
+    val uiProducts: StateFlow<List<UiProduct>> = _selectedCategory.flatMapLatest { category ->
 
         if (category.id == null) {
             catalogueUseCase.getProducts(true)
@@ -74,7 +75,6 @@ class CatalogueViewModel @Inject constructor(
                 uiCategories
             }
         }
-
     }
 
 
@@ -120,15 +120,7 @@ class CatalogueViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _selectedCategory.emit(
-                if (selectedItem.selected) {
-                    selectedItem
-                } else {
-                    UiCategory()
-                }
-            )
 
-            Log.e("!!!", "category in selectCategory fun:${_selectedCategory.value.selected}")
         }
     }
 
