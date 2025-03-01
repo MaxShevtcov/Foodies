@@ -14,6 +14,11 @@ fun Product.toUiProduct(): UiProduct {
         priceOld = priceOld,
         measure = measure,
         measureUnit = measureUnit,
-        tagIds = tagIds
+        energyPer100Grams = energyPer100Grams,
+        proteinsPer100Grams = proteinsPer100Grams,
+        fatsPer100Grams = fatsPer100Grams,
+        carbohydratesPer100Grams = carbohydratesPer100Grams,
+        tagIds = tagIds,
+        countInCart = 0
     )
 }

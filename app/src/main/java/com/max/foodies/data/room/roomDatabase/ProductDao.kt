@@ -18,12 +18,12 @@ interface ProductDao {
     @Delete
     suspend fun delete(dbProduct: DbProduct)
 
-    @Query("SELECT * FROM dbProduct_table")
+    @Query("SELECT * FROM dbProduct")
     suspend fun get(): List<DbProduct>
 
-    @Query("SELECT * FROM dbProduct_table WHERE id = :id")
+    @Query("SELECT * FROM dbProduct WHERE id = :id")
     suspend fun getById(id:Int): DbProduct
 
-    @Query("DELETE FROM dbProduct_table")
+    @Query("DELETE FROM dbProduct")
     suspend fun deleteAll()
 }

@@ -2,6 +2,7 @@ package com.max.foodies.screens.catalogueScreen.composeItems
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -18,12 +19,12 @@ import com.max.foodies.ui.theme.Orange
 fun CategoryButton(
     modifier: Modifier,
     category: UiCategory,
-    onSelected: (UiCategory, Boolean) -> Unit,
+    onSelected: () -> Unit,
     selected: Boolean
 ) {
     if (selected) {
         ElevatedButton(
-            onClick = {onSelected(category,!selected)} ,
+            onClick = {onSelected()} ,
             modifier = modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(15),
@@ -34,7 +35,7 @@ fun CategoryButton(
         }
     }else {
         TextButton(
-            onClick = {onSelected(category,!selected)},
+            onClick = {onSelected()},
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp),

@@ -9,6 +9,8 @@ sealed class NavRoute(val path: String) {
     @Serializable
     object Search: NavRoute("Search")
     @Serializable
+    object Cart: NavRoute("Cart")
+    @Serializable
     object Product: NavRoute("Product") {
         val id = "id"
 

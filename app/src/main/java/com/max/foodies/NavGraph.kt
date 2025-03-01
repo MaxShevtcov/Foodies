@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
+import com.max.foodies.screens.cartScreen.CartScreen
 import com.max.foodies.screens.catalogueScreen.CatalogueScreen
 import com.max.foodies.screens.productScreen.ProductScreen
 import com.max.foodies.screens.searchScreen.SearchScreen
@@ -66,6 +67,8 @@ fun NavGraph(navController: NavHostController) {
         addSearchScreen(navController, this)
 
         addProductScreen(navController, this)
+
+        addCartScreen(navController, this)
     }
 }
 
@@ -76,8 +79,10 @@ private fun addCatalogueScreen(
     navGraphBuilder.composable(route = NavRoute.Catalogue.path) {
         CatalogueScreen(
             onNavigateToSearch = { navController.navigate(route = NavRoute.Search.path) },
+            onNavigateToCart = { navController.navigate(route = NavRoute.Cart.path) },
             onNavigateToProduct = { id ->
-                navController.navigate(route = NavRoute.Product.withArgs("$id")
+                navController.navigate(
+                    route = NavRoute.Product.withArgs("$id")
                 )
             }
         )
@@ -103,7 +108,24 @@ private fun addSearchScreen(
     }
 }
 
+private fun addCartScreen(
+    navController: NavHostController,
+    navGraphBuilder: NavGraphBuilder
+) {
+    navGraphBuilder.composable(route = NavRoute.Cart.path) {
 
+        CartScreen(
+            onBackPressed = { navController.popBackStack() },
+            onNavigateToProduct = { id ->
+                navController.navigate(
+                    route = NavRoute.Product.withArgs(
+                        "$id"
+                    )
+                )
+            }
+        )
+    }
+}
 
 private fun addProductScreen(
     navController: NavHostController,
@@ -125,3 +147,4 @@ private fun addProductScreen(
         )
     }
 }
+

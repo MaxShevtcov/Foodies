@@ -17,7 +17,9 @@ import androidx.navigation.compose.rememberNavController
 import com.max.foodies.screens.catalogueScreen.CatalogueScreen
 import com.max.foodies.screens.catalogueScreen.CatalogueViewModel
 import com.max.foodies.ui.theme.FoodiesTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
 

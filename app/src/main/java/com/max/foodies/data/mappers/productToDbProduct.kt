@@ -18,6 +18,7 @@ fun Product.toDbProduct(): DbProduct {
         proteinsPer100Grams = proteinsPer100Grams,
         fatsPer100Grams = fatsPer100Grams,
         carbohydratesPer100Grams = carbohydratesPer100Grams,
-        tagIds = tagIds
+        tagIds = tagIds,
+        countInCart = 0
     )
 }

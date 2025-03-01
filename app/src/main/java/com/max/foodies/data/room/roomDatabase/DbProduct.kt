@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.max.foodies.data.room.ProductConverters
 
-@Entity(tableName = "dbProduct_table")
+@Entity
 @TypeConverters(ProductConverters::class)
 data class DbProduct(
     @PrimaryKey(autoGenerate = false)
@@ -37,4 +37,6 @@ data class DbProduct(
     val carbohydratesPer100Grams: Double? = null,
     @ColumnInfo("tag_ids")
     var tagIds: List<String>? = emptyList(),
+    @ColumnInfo("count_in_cart")
+    var countInCart: Int? = null,
 )
